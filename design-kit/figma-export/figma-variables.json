@@ -1,0 +1,1341 @@
+{
+  "variableCollections": [
+    {
+      "id": "COL:0001",
+      "name": "Colors",
+      "modes": [
+        {
+          "modeId": "MODE:light",
+          "name": "Light"
+        },
+        {
+          "modeId": "MODE:dark",
+          "name": "Dark"
+        }
+      ],
+      "defaultModeId": "MODE:light",
+      "variableIds": [
+        "COLOR:0001",
+        "COLOR:0002",
+        "COLOR:0003",
+        "COLOR:0004",
+        "COLOR:0005",
+        "COLOR:0006",
+        "COLOR:0007",
+        "COLOR:0008",
+        "COLOR:0009",
+        "COLOR:0010",
+        "COLOR:0011",
+        "COLOR:0012",
+        "COLOR:0013",
+        "COLOR:0014",
+        "COLOR:0015",
+        "COLOR:0016",
+        "COLOR:0017",
+        "COLOR:0018",
+        "COLOR:0019",
+        "COLOR:0020",
+        "COLOR:0021",
+        "COLOR:0022",
+        "COLOR:0023"
+      ]
+    },
+    {
+      "id": "COL:0002",
+      "name": "Colors/Sidebar",
+      "modes": [
+        {
+          "modeId": "MODE:sidebar",
+          "name": "Default"
+        }
+      ],
+      "defaultModeId": "MODE:sidebar",
+      "variableIds": [
+        "COLOR_SB:0024",
+        "COLOR_SB:0025",
+        "COLOR_SB:0026",
+        "COLOR_SB:0027",
+        "COLOR_SB:0028",
+        "COLOR_SB:0029",
+        "COLOR_SB:0030"
+      ]
+    },
+    {
+      "id": "COL:0003",
+      "name": "Spacing",
+      "modes": [
+        {
+          "modeId": "MODE:default",
+          "name": "Default"
+        }
+      ],
+      "defaultModeId": "MODE:default",
+      "variableIds": [
+        "SP:0031",
+        "SP:0032",
+        "SP:0033",
+        "SP:0034",
+        "SP:0035",
+        "SP:0036",
+        "SP:0037",
+        "SP:0038",
+        "SP:0039",
+        "SP:0040",
+        "SP:0041"
+      ]
+    },
+    {
+      "id": "COL:0004",
+      "name": "Border Radius",
+      "modes": [
+        {
+          "modeId": "MODE:default",
+          "name": "Default"
+        }
+      ],
+      "defaultModeId": "MODE:default",
+      "variableIds": [
+        "RADIUS:0042",
+        "RADIUS:0043",
+        "RADIUS:0044",
+        "RADIUS:0045",
+        "RADIUS:0046"
+      ]
+    },
+    {
+      "id": "COL:0005",
+      "name": "Typography",
+      "modes": [
+        {
+          "modeId": "MODE:default",
+          "name": "Default"
+        }
+      ],
+      "defaultModeId": "MODE:default",
+      "variableIds": [
+        "FONT_SIZE:0047",
+        "FONT_SIZE:0048",
+        "FONT_SIZE:0049",
+        "FONT_SIZE:0050",
+        "FONT_SIZE:0051",
+        "FONT_SIZE:0052",
+        "FONT_SIZE:0053",
+        "FONT_SIZE:0054",
+        "FONT_WEIGHT:0055",
+        "FONT_WEIGHT:0056",
+        "FONT_WEIGHT:0057",
+        "FONT_WEIGHT:0058"
+      ]
+    },
+    {
+      "id": "COL:0006",
+      "name": "Layout",
+      "modes": [
+        {
+          "modeId": "MODE:default",
+          "name": "Default"
+        }
+      ],
+      "defaultModeId": "MODE:default",
+      "variableIds": [
+        "LAYOUT:0059",
+        "LAYOUT:0060",
+        "LAYOUT:0061",
+        "LAYOUT:0062",
+        "LAYOUT:0063",
+        "LAYOUT:0064"
+      ]
+    }
+  ],
+  "variables": [
+    {
+      "id": "COLOR:0001",
+      "name": "Colors/background",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.9764705882352941,
+            "g": 0.9803921568627451,
+            "b": 0.984313725490196,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.06666666666666667,
+            "g": 0.09803921568627451,
+            "b": 0.1568627450980392,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0002",
+      "name": "Colors/surface",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.12156862745098039,
+            "g": 0.1607843137254902,
+            "b": 0.21568627450980393,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0003",
+      "name": "Colors/surfaceVariant",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.9529411764705882,
+            "g": 0.9568627450980393,
+            "b": 0.9647058823529412,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.21568627450980393,
+            "g": 0.2549019607843137,
+            "b": 0.3176470588235294,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0004",
+      "name": "Colors/onSurfaceVariant",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.4196078431372549,
+            "g": 0.4470588235294118,
+            "b": 0.5019607843137255,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.611764705882353,
+            "g": 0.6392156862745098,
+            "b": 0.6862745098039216,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0005",
+      "name": "Colors/primary",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.10196078431372549,
+            "g": 0.33725490196078434,
+            "b": 0.8588235294117647,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.3764705882352941,
+            "g": 0.6470588235294118,
+            "b": 0.9803921568627451,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0006",
+      "name": "Colors/primaryDarken",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.0784313725490196,
+            "g": 0.2784313725490196,
+            "b": 0.7215686274509804,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.23137254901960785,
+            "g": 0.5098039215686274,
+            "b": 0.9647058823529412,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0007",
+      "name": "Colors/secondary",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.49411764705882355,
+            "g": 0.22745098039215686,
+            "b": 0.9490196078431372,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.6549019607843137,
+            "g": 0.5450980392156862,
+            "b": 0.9803921568627451,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0008",
+      "name": "Colors/secondaryDarken",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.4,
+            "g": 0.15294117647058825,
+            "b": 0.8,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.5450980392156862,
+            "g": 0.3607843137254902,
+            "b": 0.9647058823529412,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0009",
+      "name": "Colors/success",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.054901960784313725,
+            "g": 0.6235294117647059,
+            "b": 0.43137254901960786,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.20392156862745098,
+            "g": 0.8274509803921568,
+            "b": 0.6,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0010",
+      "name": "Colors/successDarken",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.0196078431372549,
+            "g": 0.47843137254901963,
+            "b": 0.3333333333333333,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.0196078431372549,
+            "g": 0.47843137254901963,
+            "b": 0.3333333333333333,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0011",
+      "name": "Colors/warning",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.8509803921568627,
+            "g": 0.4666666666666667,
+            "b": 0.023529411764705882,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.984313725490196,
+            "g": 0.7490196078431373,
+            "b": 0.1411764705882353,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0012",
+      "name": "Colors/warningDarken",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.7058823529411765,
+            "g": 0.3254901960784314,
+            "b": 0.03529411764705882,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.7058823529411765,
+            "g": 0.3254901960784314,
+            "b": 0.03529411764705882,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0013",
+      "name": "Colors/error",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.8784313725490196,
+            "g": 0.1411764705882353,
+            "b": 0.1411764705882353,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.9725490196078431,
+            "g": 0.44313725490196076,
+            "b": 0.44313725490196076,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0014",
+      "name": "Colors/errorDarken",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.7843137254901961,
+            "g": 0.11764705882352941,
+            "b": 0.11764705882352941,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.7843137254901961,
+            "g": 0.11764705882352941,
+            "b": 0.11764705882352941,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0015",
+      "name": "Colors/info",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.10196078431372549,
+            "g": 0.33725490196078434,
+            "b": 0.8588235294117647,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.3764705882352941,
+            "g": 0.6470588235294118,
+            "b": 0.9803921568627451,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0016",
+      "name": "Colors/onPrimary",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.06666666666666667,
+            "g": 0.09803921568627451,
+            "b": 0.1568627450980392,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0017",
+      "name": "Colors/onSecondary",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0018",
+      "name": "Colors/onSuccess",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0019",
+      "name": "Colors/onError",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0020",
+      "name": "Colors/onWarning",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0021",
+      "name": "Colors/border",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.8980392156862745,
+            "g": 0.9058823529411765,
+            "b": 0.9215686274509803,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.21568627450980393,
+            "g": 0.2549019607843137,
+            "b": 0.3176470588235294,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0022",
+      "name": "Colors/textPrimary",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.06666666666666667,
+            "g": 0.09803921568627451,
+            "b": 0.1568627450980392,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.9764705882352941,
+            "g": 0.9803921568627451,
+            "b": 0.984313725490196,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR:0023",
+      "name": "Colors/textMuted",
+      "collectionId": "COL:0001",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:light": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.4196078431372549,
+            "g": 0.4470588235294118,
+            "b": 0.5019607843137255,
+            "a": 1
+          }
+        },
+        "MODE:dark": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.611764705882353,
+            "g": 0.6392156862745098,
+            "b": 0.6862745098039216,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0024",
+      "name": "Colors/Sidebar/bg",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.06666666666666667,
+            "g": 0.09803921568627451,
+            "b": 0.1568627450980392,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0025",
+      "name": "Colors/Sidebar/surface",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 0.12156862745098039,
+            "g": 0.1607843137254902,
+            "b": 0.21568627450980393,
+            "a": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0026",
+      "name": "Colors/Sidebar/border",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 0.07
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0027",
+      "name": "Colors/Sidebar/text",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 0.75
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0028",
+      "name": "Colors/Sidebar/textMuted",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 0.5
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0029",
+      "name": "Colors/Sidebar/textFaint",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 0.3
+          }
+        }
+      }
+    },
+    {
+      "id": "COLOR_SB:0030",
+      "name": "Colors/Sidebar/hover",
+      "collectionId": "COL:0002",
+      "resolvedType": "COLOR",
+      "description": "",
+      "valuesByMode": {
+        "MODE:sidebar": {
+          "type": "COLOR",
+          "value": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 0.05
+          }
+        }
+      }
+    },
+    {
+      "id": "SP:0031",
+      "name": "Spacing/1",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "4px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 4
+        }
+      }
+    },
+    {
+      "id": "SP:0032",
+      "name": "Spacing/2",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "8px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 8
+        }
+      }
+    },
+    {
+      "id": "SP:0033",
+      "name": "Spacing/3",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "12px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 12
+        }
+      }
+    },
+    {
+      "id": "SP:0034",
+      "name": "Spacing/4",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "16px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 16
+        }
+      }
+    },
+    {
+      "id": "SP:0035",
+      "name": "Spacing/5",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "20px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 20
+        }
+      }
+    },
+    {
+      "id": "SP:0036",
+      "name": "Spacing/6",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "24px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 24
+        }
+      }
+    },
+    {
+      "id": "SP:0037",
+      "name": "Spacing/7",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "28px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 28
+        }
+      }
+    },
+    {
+      "id": "SP:0038",
+      "name": "Spacing/8",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "32px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 32
+        }
+      }
+    },
+    {
+      "id": "SP:0039",
+      "name": "Spacing/10",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "40px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 40
+        }
+      }
+    },
+    {
+      "id": "SP:0040",
+      "name": "Spacing/12",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "48px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 48
+        }
+      }
+    },
+    {
+      "id": "SP:0041",
+      "name": "Spacing/16",
+      "collectionId": "COL:0003",
+      "resolvedType": "FLOAT",
+      "description": "64px spacing",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 64
+        }
+      }
+    },
+    {
+      "id": "RADIUS:0042",
+      "name": "BorderRadius/sm",
+      "collectionId": "COL:0004",
+      "resolvedType": "FLOAT",
+      "description": "4px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 4
+        }
+      }
+    },
+    {
+      "id": "RADIUS:0043",
+      "name": "BorderRadius/md",
+      "collectionId": "COL:0004",
+      "resolvedType": "FLOAT",
+      "description": "8px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 8
+        }
+      }
+    },
+    {
+      "id": "RADIUS:0044",
+      "name": "BorderRadius/lg",
+      "collectionId": "COL:0004",
+      "resolvedType": "FLOAT",
+      "description": "12px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 12
+        }
+      }
+    },
+    {
+      "id": "RADIUS:0045",
+      "name": "BorderRadius/xl",
+      "collectionId": "COL:0004",
+      "resolvedType": "FLOAT",
+      "description": "16px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 16
+        }
+      }
+    },
+    {
+      "id": "RADIUS:0046",
+      "name": "BorderRadius/full",
+      "collectionId": "COL:0004",
+      "resolvedType": "FLOAT",
+      "description": "9999px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 9999
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0047",
+      "name": "Typography/FontSize/xs",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "11px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 11
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0048",
+      "name": "Typography/FontSize/sm",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "12px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 12
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0049",
+      "name": "Typography/FontSize/body",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "14px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 14
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0050",
+      "name": "Typography/FontSize/md",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "16px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 16
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0051",
+      "name": "Typography/FontSize/lg",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "18px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 18
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0052",
+      "name": "Typography/FontSize/xl",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "22px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 22
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0053",
+      "name": "Typography/FontSize/2xl",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "28px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 28
+        }
+      }
+    },
+    {
+      "id": "FONT_SIZE:0054",
+      "name": "Typography/FontSize/3xl",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "36px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 36
+        }
+      }
+    },
+    {
+      "id": "FONT_WEIGHT:0055",
+      "name": "Typography/FontWeight/regular",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "400 weight",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 400
+        }
+      }
+    },
+    {
+      "id": "FONT_WEIGHT:0056",
+      "name": "Typography/FontWeight/medium",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "500 weight",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 500
+        }
+      }
+    },
+    {
+      "id": "FONT_WEIGHT:0057",
+      "name": "Typography/FontWeight/semibold",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "600 weight",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 600
+        }
+      }
+    },
+    {
+      "id": "FONT_WEIGHT:0058",
+      "name": "Typography/FontWeight/bold",
+      "collectionId": "COL:0005",
+      "resolvedType": "FLOAT",
+      "description": "700 weight",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 700
+        }
+      }
+    },
+    {
+      "id": "LAYOUT:0059",
+      "name": "Layout/sidebarWidth",
+      "collectionId": "COL:0006",
+      "resolvedType": "FLOAT",
+      "description": "260px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 260
+        }
+      }
+    },
+    {
+      "id": "LAYOUT:0060",
+      "name": "Layout/sidebarRailWidth",
+      "collectionId": "COL:0006",
+      "resolvedType": "FLOAT",
+      "description": "72px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 72
+        }
+      }
+    },
+    {
+      "id": "LAYOUT:0061",
+      "name": "Layout/appbarHeight",
+      "collectionId": "COL:0006",
+      "resolvedType": "FLOAT",
+      "description": "56px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 56
+        }
+      }
+    },
+    {
+      "id": "LAYOUT:0062",
+      "name": "Layout/drawerWidth",
+      "collectionId": "COL:0006",
+      "resolvedType": "FLOAT",
+      "description": "480px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 480
+        }
+      }
+    },
+    {
+      "id": "LAYOUT:0063",
+      "name": "Layout/searchMaxWidth",
+      "collectionId": "COL:0006",
+      "resolvedType": "FLOAT",
+      "description": "360px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 360
+        }
+      }
+    },
+    {
+      "id": "LAYOUT:0064",
+      "name": "Layout/contentMaxWidth",
+      "collectionId": "COL:0006",
+      "resolvedType": "FLOAT",
+      "description": "1280px",
+      "valuesByMode": {
+        "MODE:default": {
+          "type": "FLOAT",
+          "value": 1280
+        }
+      }
+    }
+  ]
+}

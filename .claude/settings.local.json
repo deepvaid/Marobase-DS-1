@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx vue-tsc --noEmit)",
+      "Bash(lsof -ti:5173 -ti:5174)",
+      "Bash(xargs kill -9)",
+      "Bash(python3 -c \"import sys, json; [print\\(json.loads\\(line\\).get\\(''message'', {}\\).get\\(''content'', ''''\\)[:500] if isinstance\\(json.loads\\(line\\).get\\(''message'', {}\\).get\\(''content'', ''''\\), str\\) else ''''\\) for line in sys.stdin if line.strip\\(\\)]\")",
+      "Bash(python3 -c \" import json with open\\(''/Users/deepakvaidya/.claude/projects/-Users-deepakvaidya-Desktop-new-maropost-Claude/e65a8aa1-2353-4cfc-8615-07c879bb84f1.jsonl'', ''r''\\) as f: lines = f.readlines\\(\\) # Get the last 100 lines and look for assistant messages with edits for i, line in enumerate\\(lines[-150:]\\): try: data = json.loads\\(line\\) msg = data.get\\(''message'', {}\\) role = msg.get\\(''role'', ''''\\) content = msg.get\\(''content'', ''''\\) if role == ''human'' or role == ''user'': if isinstance\\(content, str\\): print\\(f''--- USER [{i}]: {content[:300]}''\\) elif isinstance\\(content, list\\): for c in content: if isinstance\\(c, dict\\) and c.get\\(''type''\\) == ''text'': print\\(f''--- USER [{i}]: {c[\"\"text\"\"][:300]}''\\) elif role == ''assistant'': if isinstance\\(content, list\\): for c in content: if isinstance\\(c, dict\\): if c.get\\(''type''\\) == ''tool_use'' and c.get\\(''name''\\) == ''Edit'': inp = c.get\\(''input'', {}\\) print\\(f''--- EDIT [{i}]: {inp.get\\(\"\"file_path\"\", \"\"\"\"\\)}''\\) print\\(f'' OLD: {str\\(inp.get\\(\"\"old_string\"\", \"\"\"\"\\)\\)[:200]}''\\) print\\(f'' NEW: {str\\(inp.get\\(\"\"new_string\"\", \"\"\"\"\\)\\)[:200]}''\\) elif c.get\\(''type''\\) == ''text'': txt = c.get\\(''text'', ''''\\) if txt.strip\\(\\): print\\(f''--- ASST [{i}]: {txt[:300]}''\\) except: pass \")",
+      "Bash(npm show:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(pkill:*)"
+    ]
+  }
+}

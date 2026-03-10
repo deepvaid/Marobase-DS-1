@@ -1,0 +1,85 @@
+# Cursor Rules — Maropost Design System
+
+## Read First
+- `CLAUDE.md` — full project architecture, component APIs, conventions
+- `CLAUDE_CODE_PROMPT.md` — product spec from live app observation
+- `src/design-tokens/tokens.json` — all design values
+
+## Stack
+Vue 3.5 + Vuetify 3.12 + TypeScript 5.9 + Vite 7 + Pinia 3
+
+## Component Rules
+
+### Creating a new component
+1. File: `src/components/MpComponentName.vue`
+2. Use `<script setup lang="ts">`
+3. Type props: `defineProps<{ title: string; count?: number }>()`
+4. Type emits: `defineEmits<{ (e: 'update', val: string): void }>()`
+5. Scoped styles only: `<style scoped>`
+6. Write story: `MpComponentName.stories.ts` alongside the component
+7. Reference design tokens — never hardcode colors/spacing
+
+### Modifying an existing component
+1. Read the component file first
+2. Read its `.stories.ts` file
+3. Update both component and story together
+4. Run `npm run storybook` to verify
+
+## Styling
+
+### Do
+- Use Vuetify utility classes: `d-flex`, `pa-4`, `gap-3`, `text-medium-emphasis`
+- Use `v-card flat border rounded="lg"` for cards (no shadows)
+- Use `MpStatusChip` for all status displays (pass correct `type` prop)
+- Use design token SCSS variables: `$mp-spacing-4`, `$mp-borderRadius-md`
+- Use scoped styles
+
+### Don't
+- Don't hardcode hex colors in templates or styles
+- Don't use `elevation="4"` or heavy shadows
+- Don't use `v-dialog` for forms (use `MpFormDrawer` instead)
+- Don't use `!important` (except in rare utility overrides)
+- Don't create unnamed slots
+- Don't use inline styles in templates
+- Don't mix icon libraries (MDI only via `mdi-*`)
+
+## Page View Pattern
+
+Every data page follows this layout:
+```vue
+<template>
+  <MpPageHeader title="..." subtitle="..." :breadcrumbs="[...]">
+    <template #actions>
+      <v-btn color="primary" prepend-icon="mdi-plus">Create</v-btn>
+    </template>
+  </MpPageHeader>
+  <MpFilterTabs v-model="activeTab" :tabs="[...]" />
+  <v-card flat border class="mt-4">
+    <MpDataTableToolbar v-model:search="search">
+      <template #actions>...</template>
+    </MpDataTableToolbar>
+    <v-data-table :headers="headers" :items="filteredItems" />
+    <MpEmptyState v-if="!filteredItems.length" ... />
+  </v-card>
+  <MpFloatingBulkBar :count="selected.length" @clear="selected = []">
+    ...bulk actions...
+  </MpFloatingBulkBar>
+</template>
+```
+
+## Design Tokens
+- Source: `src/design-tokens/tokens.json`
+- Generated: `src/design-tokens/generated/` (don't edit these)
+- Rebuild: `npm run tokens:build`
+
+## File Naming
+- Components: `PascalCase` with `Mp` prefix → `MpStatusChip.vue`
+- Stories: `MpStatusChip.stories.ts` (co-located)
+- Views: `PascalCase` → `SalesOrders.vue`
+- Stores: `camelCase` with `use` prefix → `useCommerce.ts`
+- Styles: `kebab-case` → `global.scss`
+
+## Commit Messages
+Format: `[type]: description`
+Types: feat, fix, docs, refactor, perf, test, chore
+Example: `[feat]: add MpDateRangePicker with story`
