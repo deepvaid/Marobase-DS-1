@@ -123,7 +123,7 @@
         "description": "color.light.onSurfaceVariant"
       },
       "primary": {
-        "value": "#1A56DB",
+        "value": "#ff00ff",
         "type": "color",
         "description": "color.light.primary"
       },
