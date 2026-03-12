@@ -123,12 +123,12 @@
         "description": "color.light.onSurfaceVariant"
       },
       "primary": {
-        "value": "#ff00ff",
+        "value": "#0091FF",
         "type": "color",
         "description": "color.light.primary"
       },
       "primaryDarken": {
-        "value": "#1447B8",
+        "value": "#1466b8",
         "type": "color",
         "description": "color.light.primaryDarken"
       },
