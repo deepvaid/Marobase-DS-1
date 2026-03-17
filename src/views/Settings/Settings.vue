@@ -9,7 +9,7 @@ const newUserEmail = ref('')
 const newUserRole = ref('Marketer')
 const addDomainDialog = ref(false)
 const addKeyDialog = ref(false)
-const settingSearch = ref('')
+
 const selectedSetting = ref<string | null>(null)
 
 // ── Top-level horizontal tabs matching the real Maropost app ──────────────────
@@ -57,17 +57,15 @@ const settingCards: Record<string, { key: string; icon: string; color: string; l
 
 const currentCards = computed(() => settingCards[activeTab.value] ?? [])
 
-const filteredCards = computed(() => {
-  const q = settingSearch.value.toLowerCase().trim()
-  if (!q) return currentCards.value
-  return currentCards.value.filter(c =>
-    c.label.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)
-  )
-})
-
-function openSetting(key: string) {
-  selectedSetting.value = key
+// When top-level nav changes, jump to first sub-item of that section
+function selectTab(key: string) {
+  activeTab.value = key
+  const cards = settingCards[key]
+  selectedSetting.value = cards?.length ? cards[0].key : null
 }
+
+// Initialise to first card of default tab (account)
+selectedSetting.value = settingCards['account'][0].key
 
 // ── Data ──────────────────────────────────────────────────────────────────
 const company = ref({
@@ -169,141 +167,130 @@ function save() { saveSnack.value = true }
         { title: 'Home', to: '/dashboard' },
         { title: 'Settings', disabled: true },
       ]"
-    >
-      <template #actions>
-        <div style="width: 260px;">
-          <v-text-field v-model="settingSearch" prepend-inner-icon="mdi-magnify" placeholder="Search settings..." variant="outlined" density="compact" hide-details clearable rounded="lg" />
-        </div>
-      </template>
-    </MpPageHeader>
+    />
 
-    <!-- Horizontal Tab Bar (matches real Maropost) -->
-    <v-tabs v-model="activeTab" color="primary" density="compact" class="mb-6" height="40" @update:model-value="selectedSetting = null">
-      <v-tab v-for="tab in topTabs" :key="tab.key" :value="tab.key" class="text-none font-weight-medium px-4">
-        <v-icon size="16" class="mr-1">{{ tab.icon }}</v-icon>
-        {{ tab.label }}
-      </v-tab>
-    </v-tabs>
+    <!-- Two-column layout: vertical nav + content -->
+    <div class="d-flex flex-grow-1 overflow-hidden settings-layout">
 
-    <div class="flex-grow-1 overflow-y-auto">
-
-      <!-- ── Icon Card Grid (per-tab overview) ───────────────────── -->
-      <div v-if="!selectedSetting">
-        <div v-if="filteredCards.length === 0" class="text-center py-12 text-medium-emphasis">
-          <v-icon size="48" class="mb-3">mdi-magnify-close</v-icon>
-          <div class="text-body-1">No settings match "{{ settingSearch }}"</div>
-        </div>
-
-        <v-row dense>
-          <v-col v-for="card in filteredCards" :key="card.key" cols="12" sm="6" md="4">
-            <v-card
-              variant="flat"
-              border
-              rounded="xl"
-              class="pa-5 settings-tile cursor-pointer h-100"
-              @click="openSetting(card.key)"
-            >
-              <div class="d-flex align-start gap-4">
-                <v-avatar :color="card.color" variant="tonal" size="48" rounded="lg">
-                  <v-icon :color="card.color" size="24">{{ card.icon }}</v-icon>
-                </v-avatar>
-                <div class="flex-grow-1">
-                  <div class="font-weight-bold text-body-1 mb-1">{{ card.label }}</div>
-                  <div class="text-body-2 text-medium-emphasis">{{ card.desc }}</div>
-                </div>
-                <v-icon color="medium-emphasis" size="18">mdi-chevron-right</v-icon>
-              </div>
-            </v-card>
-          </v-col>
-        </v-row>
+      <!-- LEFT: Vertical settings nav -->
+      <div class="settings-nav flex-shrink-0">
+        <v-list density="compact" nav class="bg-transparent">
+          <v-list-item
+            v-for="tab in topTabs"
+            :key="tab.key"
+            :prepend-icon="tab.icon"
+            :title="tab.label"
+            :active="tab.key === activeTab"
+            color="primary"
+            rounded="lg"
+            class="mb-1"
+            @click="selectTab(tab.key)"
+          />
+        </v-list>
       </div>
 
-      <!-- ── Detail Panels (shown when a card is clicked) ────────── -->
-      <div v-else>
-        <!-- Back breadcrumb -->
-        <div class="d-flex align-center gap-2 mb-5">
-          <v-btn
-            variant="text"
-            size="small"
-            prepend-icon="mdi-arrow-left"
-            class="text-none text-medium-emphasis"
-            @click="selectedSetting = null"
-          >Back to {{ topTabs.find(t => t.key === activeTab)?.label }}</v-btn>
-        </div>
+      <!-- RIGHT: Content area -->
+      <div class="flex-grow-1 overflow-y-auto">
+
+        <!-- ── Sub-tabs (horizontal tabs for each section's items) ── -->
+        <v-tabs
+          v-if="currentCards.length > 1"
+          v-model="selectedSetting"
+          color="primary"
+          density="compact"
+          height="36"
+          bg-color="transparent"
+          show-arrows
+          class="settings-subtabs"
+        >
+          <v-tab
+            v-for="card in currentCards"
+            :key="card.key"
+            :value="card.key"
+            class="text-none"
+          >
+            {{ card.label }}
+          </v-tab>
+        </v-tabs>
+
+      <!-- ── Detail Panels ─────────────────────────────────────── -->
+      <div>
 
         <!-- Account & Company ─────────────────────────────────── -->
-        <v-card v-if="selectedSetting==='accountdetails'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b">
-            <div class="text-h6 font-weight-bold mb-1">Account & Company</div>
-            <div class="text-body-2 text-medium-emphasis">Basic account details, locale, and contact address.</div>
-          </div>
-          <div class="pa-6">
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Account</div>
-            <v-row dense class="mb-4">
-              <v-col cols="12" sm="4"><v-text-field v-model="company.accountId" label="Account ID" variant="outlined" density="comfortable" readonly bg-color="surface-variant"></v-text-field></v-col>
-              <v-col cols="12" sm="8"><v-text-field v-model="company.name" label="Account Name" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="company.clientName" label="Client / Contact Name" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-select v-model="company.industry" label="Industry" :items="['E-Commerce','SaaS','Retail','Media','Healthcare','Finance','Other']" variant="outlined" density="comfortable"></v-select></v-col>
-              <v-col cols="12" sm="6"><v-select v-model="company.language" label="Language" :items="['English (US)','English (UK)','French','Spanish','German','Portuguese']" variant="outlined" density="comfortable"></v-select></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="company.website" label="Website URL" variant="outlined" density="comfortable" prepend-inner-icon="mdi-web"></v-text-field></v-col>
-            </v-row>
-            <v-divider class="mb-4"></v-divider>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Locale</div>
-            <v-row dense class="mb-4">
-              <v-col cols="12" sm="4"><v-select v-model="company.timezone" label="Timezone" :items="['America/New_York','America/Chicago','America/Los_Angeles','UTC','Europe/London','Asia/Tokyo']" variant="outlined" density="comfortable"></v-select></v-col>
-              <v-col cols="12" sm="4"><v-select v-model="company.currency" label="Currency" :items="['USD','EUR','GBP','CAD','AUD','JPY']" variant="outlined" density="comfortable"></v-select></v-col>
-              <v-col cols="12" sm="4"><v-select v-model="company.dateFormat" label="Date Format" :items="['MM/DD/YYYY','DD/MM/YYYY','YYYY-MM-DD']" variant="outlined" density="comfortable"></v-select></v-col>
-            </v-row>
-            <v-divider class="mb-4"></v-divider>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Address</div>
-            <v-row dense>
-              <v-col cols="12"><v-text-field v-model="company.address1" label="Address Line 1" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12"><v-text-field v-model="company.address2" label="Address Line 2 (optional)" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-select v-model="company.country" label="Country" :items="['United States','Canada','United Kingdom','Australia','India','Germany']" variant="outlined" density="comfortable"></v-select></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="company.state" label="State / Province" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="company.city" label="City" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="company.zip" label="Zip / Postal Code" variant="outlined" density="comfortable"></v-text-field></v-col>
-            </v-row>
-          </div>
-          <div class="pa-5 border-t d-flex justify-end"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Changes</v-btn></div>
-        </v-card>
+        <div v-if="selectedSetting==='accountdetails'">
+          <v-card variant="flat" rounded="xl" class="settings-panel-card">
+            <div class="settings-card-header">
+              <div class="text-h6 font-weight-bold mb-1">Account & Company</div>
+              <div class="text-body-2 text-medium-emphasis">Basic account details, locale, and contact address.</div>
+            </div>
+            <div class="settings-card-body">
+              <div class="settings-section-heading">Account</div>
+              <v-row class="settings-field-row">
+                <v-col cols="12" sm="4"><v-text-field v-model="company.accountId" label="Account ID" variant="outlined" density="comfortable" readonly bg-color="surface-variant"></v-text-field></v-col>
+                <v-col cols="12" sm="8"><v-text-field v-model="company.name" label="Account Name" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="company.clientName" label="Client / Contact Name" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-select v-model="company.industry" label="Industry" :items="['E-Commerce','SaaS','Retail','Media','Healthcare','Finance','Other']" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="6"><v-select v-model="company.language" label="Language" :items="['English (US)','English (UK)','French','Spanish','German','Portuguese']" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="company.website" label="Website URL" variant="outlined" density="comfortable" prepend-inner-icon="mdi-web"></v-text-field></v-col>
+              </v-row>
+              <div class="settings-section-divider"></div>
+              <div class="settings-section-heading">Locale</div>
+              <v-row class="settings-field-row">
+                <v-col cols="12" sm="4"><v-select v-model="company.timezone" label="Timezone" :items="['America/New_York','America/Chicago','America/Los_Angeles','UTC','Europe/London','Asia/Tokyo']" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="4"><v-select v-model="company.currency" label="Currency" :items="['USD','EUR','GBP','CAD','AUD','JPY']" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="4"><v-select v-model="company.dateFormat" label="Date Format" :items="['MM/DD/YYYY','DD/MM/YYYY','YYYY-MM-DD']" variant="outlined" density="comfortable"></v-select></v-col>
+              </v-row>
+              <div class="settings-section-divider"></div>
+              <div class="settings-section-heading">Address</div>
+              <v-row class="settings-field-row">
+                <v-col cols="12"><v-text-field v-model="company.address1" label="Address Line 1" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12"><v-text-field v-model="company.address2" label="Address Line 2 (optional)" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-select v-model="company.country" label="Country" :items="['United States','Canada','United Kingdom','Australia','India','Germany']" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="company.state" label="State / Province" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="company.city" label="City" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="company.zip" label="Zip / Postal Code" variant="outlined" density="comfortable"></v-text-field></v-col>
+              </v-row>
+            </div>
+          </v-card>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Changes</v-btn></div>
+        </div>
 
         <!-- Billing ──────────────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='billing'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">Billing & Plan</div><div class="text-body-2 text-medium-emphasis">Manage your subscription, payment method, and invoices.</div></div>
-          <div class="pa-6">
-            <v-card variant="tonal" color="primary" rounded="xl" class="pa-5 mb-6">
+        <v-card v-else-if="selectedSetting==='billing'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">Billing & Plan</div><div class="text-body-2 text-medium-emphasis">Manage your subscription, payment method, and invoices.</div></div>
+          <div class="settings-card-body">
+            <div class="billing-plan-banner mb-8">
               <div class="d-flex align-center justify-space-between flex-wrap gap-4">
                 <div>
-                  <v-chip color="white" variant="flat" size="small" class="font-weight-bold mb-2">MARKETING CLOUD ENTERPRISE</v-chip>
-                  <div class="text-h5 font-weight-bold text-white mb-1">$1,499 / month</div>
-                  <div class="text-body-2 text-white" style="opacity:.8">50M emails · Unlimited contacts · Priority support</div>
+                  <v-chip size="small" variant="flat" class="font-weight-bold mb-3 billing-plan-chip">MARKETING CLOUD ENTERPRISE</v-chip>
+                  <div class="text-h4 font-weight-bold mb-1" style="color:#fff;">$1,499<span class="text-h6 font-weight-regular opacity-80"> / month</span></div>
+                  <div class="text-body-2" style="color:rgba(255,255,255,0.75);">50M emails · Unlimited contacts · Priority support</div>
                 </div>
-                <div class="d-flex flex-column gap-2">
-                  <v-btn variant="outlined" color="white" class="text-none" prepend-icon="mdi-arrow-up-circle">Upgrade Plan</v-btn>
-                  <v-btn variant="text" color="white" class="text-none" size="small">View Usage Details</v-btn>
+                <div class="d-flex flex-column align-end gap-2">
+                  <v-btn variant="flat" color="white" class="text-none billing-upgrade-btn" prepend-icon="mdi-arrow-up-circle">Upgrade Plan</v-btn>
+                  <v-btn variant="text" class="text-none" style="color:rgba(255,255,255,0.8);" size="small">View Usage Details</v-btn>
                 </div>
               </div>
-            </v-card>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Usage This Month</div>
-            <v-row dense class="mb-6">
+            </div>
+            <div class="settings-section-heading">Usage This Month</div>
+            <v-row class="settings-field-row mb-2">
               <v-col v-for="u in [{label:'Emails Sent',used:'12.4M',limit:'50M',pct:25},{label:'Contacts',used:'128,430',limit:'Unlimited',pct:0},{label:'SMS Sent',used:'3,240',limit:'10,000',pct:32},{label:'Support Tickets',used:'847',limit:'Unlimited',pct:0}]" :key="u.label" cols="12" sm="6">
-                <v-card variant="flat" border rounded="xl" class="pa-4">
+                <v-card variant="flat" rounded="xl" class="settings-panel-card pa-4">
                   <div class="d-flex justify-space-between align-center mb-2"><span class="text-body-2 font-weight-medium">{{ u.label }}</span><span class="text-caption text-medium-emphasis">{{ u.used }} / {{ u.limit }}</span></div>
                   <v-progress-linear v-if="u.pct>0" :model-value="u.pct" color="primary" rounded height="6" bg-color="surface-variant"></v-progress-linear>
                   <div v-else class="text-caption text-success">Unlimited</div>
                 </v-card>
               </v-col>
             </v-row>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Payment Method</div>
-            <v-card variant="outlined" rounded="xl" class="pa-4 mb-6 d-flex align-center gap-4">
+            <div class="settings-section-heading">Payment Method</div>
+            <v-card variant="flat" rounded="xl" class="pa-4 mb-6 d-flex align-center gap-4" style="background: rgba(var(--v-theme-surface-variant), 0.35);">
               <v-icon color="primary" size="32">mdi-credit-card</v-icon>
               <div><div class="font-weight-bold text-body-2">Visa ending in 4242</div><div class="text-caption text-medium-emphasis">Expires 12/2028</div></div>
               <v-spacer></v-spacer>
               <v-btn variant="outlined" size="small" color="primary" class="text-none">Change Card</v-btn>
             </v-card>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Recent Invoices</div>
-            <v-table density="compact" class="rounded-xl border">
+            <div class="settings-section-heading">Recent Invoices</div>
+            <v-table density="compact" class="rounded-xl">
               <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th><th style="width:48px"></th></tr></thead>
               <tbody>
                 <tr v-for="(inv,i) in [{date:'Mar 1, 2026',desc:'Enterprise Plan — March',amt:'$1,499'},{date:'Feb 1, 2026',desc:'Enterprise Plan — February',amt:'$1,499'},{date:'Jan 1, 2026',desc:'Enterprise Plan — January',amt:'$1,499'}]" :key="i">
@@ -318,13 +305,22 @@ function save() { saveSnack.value = true }
         </v-card>
 
         <!-- Users & Permissions ────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='users'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b d-flex align-center justify-space-between">
+        <v-card v-else-if="selectedSetting==='users'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">Users & Permissions</div><div class="text-body-2 text-medium-emphasis">{{ teamUsers.length }} members · Manage access levels per module</div></div>
             <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-account-plus" @click="addUserDialog=true">Invite User</v-btn>
           </div>
-          <v-table density="comfortable">
-            <thead><tr><th>User</th><th>Role</th><th class="text-center">Marketing</th><th class="text-center">Service</th><th class="text-center">Commerce</th><th>Status</th><th style="width:80px"></th></tr></thead>
+          <div style="overflow-x: auto;">
+          <v-table density="comfortable" style="min-width: 640px;">
+            <thead><tr>
+              <th style="min-width:200px">User</th>
+              <th>Role</th>
+              <th class="text-center" style="width:90px">Marketing</th>
+              <th class="text-center" style="width:80px">Service</th>
+              <th class="text-center" style="width:90px">Commerce</th>
+              <th style="width:90px">Status</th>
+              <th style="width:80px"></th>
+            </tr></thead>
             <tbody>
               <tr v-for="u in teamUsers" :key="u.id">
                 <td>
@@ -333,7 +329,7 @@ function save() { saveSnack.value = true }
                     <div><div class="text-body-2 font-weight-medium">{{ u.name }}</div><div class="text-caption text-medium-emphasis">{{ u.email }}</div></div>
                   </div>
                 </td>
-                <td><v-chip size="x-small" variant="outlined" color="secondary">{{ u.role }}</v-chip></td>
+                <td><v-chip size="x-small" variant="tonal" color="secondary">{{ u.role }}</v-chip></td>
                 <td class="text-center"><v-icon :color="u.marketing?'success':'grey-lighten-2'" size="18">{{ u.marketing ? 'mdi-check-circle':'mdi-minus-circle' }}</v-icon></td>
                 <td class="text-center"><v-icon :color="u.service?'success':'grey-lighten-2'" size="18">{{ u.service ? 'mdi-check-circle':'mdi-minus-circle' }}</v-icon></td>
                 <td class="text-center"><v-icon :color="u.commerce?'success':'grey-lighten-2'" size="18">{{ u.commerce ? 'mdi-check-circle':'mdi-minus-circle' }}</v-icon></td>
@@ -347,46 +343,49 @@ function save() { saveSnack.value = true }
               </tr>
             </tbody>
           </v-table>
+          </div>
         </v-card>
 
         <!-- My Profile ─────────────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='profile'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">My Profile</div><div class="text-body-2 text-medium-emphasis">Update your personal info, timezone, and password.</div></div>
-          <div class="pa-6">
-            <div class="d-flex align-center gap-5 mb-6">
-              <v-avatar color="primary" size="72" class="text-h5 font-weight-bold text-white">DV</v-avatar>
-              <div>
-                <v-btn variant="outlined" color="primary" class="text-none mb-1" prepend-icon="mdi-camera" size="small">Change Photo</v-btn>
-                <div class="text-caption text-medium-emphasis">JPG or PNG. Max 2MB.</div>
+        <div v-else-if="selectedSetting==='profile'">
+          <v-card variant="flat" rounded="xl" class="settings-panel-card">
+            <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">My Profile</div><div class="text-body-2 text-medium-emphasis">Update your personal info, timezone, and password.</div></div>
+            <div class="settings-card-body">
+              <div class="d-flex align-center gap-5 mb-8">
+                <v-avatar color="primary" size="72" class="text-h5 font-weight-bold text-white">DV</v-avatar>
+                <div>
+                  <v-btn variant="outlined" color="primary" class="text-none mb-1" prepend-icon="mdi-camera" size="small">Change Photo</v-btn>
+                  <div class="text-caption text-medium-emphasis">JPG or PNG. Max 2MB.</div>
+                </div>
               </div>
+              <v-row class="settings-field-row">
+                <v-col cols="12" sm="6"><v-text-field label="First Name" model-value="Deepak" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="Last Name" model-value="Vaidya" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="Email" model-value="deepak.v@maropost.com" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="Phone" model-value="+1 (555) 000-0000" variant="outlined" density="comfortable" prepend-inner-icon="mdi-phone"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-select label="Timezone" model-value="America/New_York" :items="['America/New_York','UTC','Europe/London','Asia/Tokyo']" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="6"><v-select label="Preferred Language" model-value="English (US)" :items="['English (US)','French','Spanish','German']" variant="outlined" density="comfortable"></v-select></v-col>
+              </v-row>
+              <div class="settings-section-divider"></div>
+              <div class="settings-section-heading">Security</div>
+              <v-row class="settings-field-row">
+                <v-col cols="12" sm="4"><v-text-field label="Current Password" type="password" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="4"><v-text-field label="New Password" type="password" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="4"><v-text-field label="Confirm Password" type="password" variant="outlined" density="comfortable"></v-text-field></v-col>
+              </v-row>
             </div>
-            <v-row dense class="mb-2">
-              <v-col cols="12" sm="6"><v-text-field label="First Name" model-value="Deepak" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field label="Last Name" model-value="Vaidya" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field label="Email" model-value="deepak.v@maropost.com" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field label="Phone" model-value="+1 (555) 000-0000" variant="outlined" density="comfortable" prepend-inner-icon="mdi-phone"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-select label="Timezone" model-value="America/New_York" :items="['America/New_York','UTC','Europe/London','Asia/Tokyo']" variant="outlined" density="comfortable"></v-select></v-col>
-              <v-col cols="12" sm="6"><v-select label="Preferred Language" model-value="English (US)" :items="['English (US)','French','Spanish','German']" variant="outlined" density="comfortable"></v-select></v-col>
-            </v-row>
-            <v-divider class="my-4"></v-divider>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Security</div>
-            <v-row dense>
-              <v-col cols="12" sm="4"><v-text-field label="Current Password" type="password" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="4"><v-text-field label="New Password" type="password" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="4"><v-text-field label="Confirm Password" type="password" variant="outlined" density="comfortable"></v-text-field></v-col>
-            </v-row>
-          </div>
-          <div class="pa-5 border-t d-flex justify-end"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Profile</v-btn></div>
-        </v-card>
+          </v-card>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Profile</v-btn></div>
+        </div>
 
         <!-- Sending Domains ────────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='domains'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b d-flex align-center justify-space-between">
+        <v-card v-else-if="selectedSetting==='domains'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">Sending Domains</div><div class="text-body-2 text-medium-emphasis">Verify domains for DKIM, SPF, and DMARC compliance.</div></div>
             <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none" @click="addDomainDialog=true">Add Domain</v-btn>
           </div>
-          <div class="pa-6">
-            <v-card v-for="d in sendingDomains" :key="d.domain" variant="flat" border rounded="xl" class="pa-5 mb-4">
+          <div class="settings-card-body">
+            <v-card v-for="d in sendingDomains" :key="d.domain" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
               <div class="d-flex align-center justify-space-between mb-4">
                 <div class="d-flex align-center gap-3">
                   <v-icon color="primary" size="20">mdi-email-outline</v-icon>
@@ -413,13 +412,13 @@ function save() { saveSnack.value = true }
         </v-card>
 
         <!-- Tracking Domains ───────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='tracking'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b d-flex align-center justify-space-between">
+        <v-card v-else-if="selectedSetting==='tracking'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">Link Tracking Domains</div><div class="text-body-2 text-medium-emphasis">Custom subdomains for click and open tracking links.</div></div>
             <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none">Add Tracking Domain</v-btn>
           </div>
-          <div class="pa-6">
-            <v-card v-for="d in trackingDomains" :key="d.domain" variant="flat" border rounded="xl" class="pa-5 mb-4">
+          <div class="settings-card-body">
+            <v-card v-for="d in trackingDomains" :key="d.domain" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
               <div class="d-flex align-center justify-space-between">
                 <div class="d-flex align-center gap-3">
                   <v-icon color="secondary" size="20">mdi-link-variant</v-icon>
@@ -437,14 +436,14 @@ function save() { saveSnack.value = true }
         </v-card>
 
         <!-- API Keys ───────────────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='apikeys'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b d-flex align-center justify-space-between">
+        <v-card v-else-if="selectedSetting==='apikeys'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">API Keys</div><div class="text-body-2 text-medium-emphasis">Manage REST API access for integrations and custom apps.</div></div>
             <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none" @click="addKeyDialog=true">Generate Key</v-btn>
           </div>
-          <div class="pa-6">
+          <div class="settings-card-body">
             <v-alert type="warning" variant="tonal" density="compact" rounded="xl" class="text-body-2 mb-5">Keep your API keys secret. Never share them or commit them to source control.</v-alert>
-            <v-card v-for="k in apiKeys" :key="k.id" variant="flat" border rounded="xl" class="pa-5 mb-4">
+            <v-card v-for="k in apiKeys" :key="k.id" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div><div class="font-weight-bold text-body-1">{{ k.label }}</div><div class="text-caption text-medium-emphasis">User: {{ k.user }}</div></div>
                 <div class="d-flex align-center gap-2">
@@ -460,13 +459,13 @@ function save() { saveSnack.value = true }
         </v-card>
 
         <!-- HTTP Post URLs / Webhooks ──────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='webhooks'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b d-flex align-center justify-space-between">
+        <v-card v-else-if="selectedSetting==='webhooks'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">HTTP Post URLs (Webhooks)</div><div class="text-body-2 text-medium-emphasis">Configure endpoints to receive real-time event notifications.</div></div>
             <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none">Add Webhook</v-btn>
           </div>
-          <div class="pa-6">
-            <v-card v-for="w in webhooks" :key="w.id" variant="flat" border rounded="xl" class="pa-5 mb-4">
+          <div class="settings-card-body">
+            <v-card v-for="w in webhooks" :key="w.id" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
               <div class="d-flex align-center justify-space-between mb-3">
                 <div class="font-weight-bold text-body-1">{{ w.label }}</div>
                 <div class="d-flex align-center gap-2">
@@ -485,11 +484,11 @@ function save() { saveSnack.value = true }
         </v-card>
 
         <!-- Integrations ───────────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='integrations'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">Integrations</div><div class="text-body-2 text-medium-emphasis">Connect your favourite tools and platforms.</div></div>
-          <v-row class="pa-6" dense>
+        <v-card v-else-if="selectedSetting==='integrations'" variant="flat" rounded="xl" class="settings-panel-card">
+          <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">Integrations</div><div class="text-body-2 text-medium-emphasis">Connect your favourite tools and platforms.</div></div>
+          <v-row class="settings-card-body" style="margin: 0;">
             <v-col v-for="intg in integrations" :key="intg.name" cols="12" sm="6" md="4">
-              <v-card variant="flat" border rounded="xl" class="pa-4 h-100 d-flex flex-column">
+              <v-card variant="flat" rounded="xl" class="settings-panel-card pa-4 h-100 d-flex flex-column">
                 <div class="d-flex align-start justify-space-between mb-3">
                   <v-icon :color="intg.color" size="32">{{ intg.icon }}</v-icon>
                   <v-chip :color="intg.connected?'success':'grey'" size="x-small" variant="flat">{{ intg.connected ? 'Connected' : 'Not Connected' }}</v-chip>
@@ -503,95 +502,106 @@ function save() { saveSnack.value = true }
         </v-card>
 
         <!-- Contact Settings ───────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='contactsettings'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">Contact Settings</div><div class="text-body-2 text-medium-emphasis">Global suppression, deduplication, and cleansing rules.</div></div>
-          <div class="pa-6">
-            <div class="d-flex flex-column gap-3">
-              <v-card v-for="(val, key) in {globalSuppression:{label:'Global Suppression List',desc:'Prevent unsubscribed contacts from being re-added',val:contactSettings.globalSuppression},autoUnsubEmail:{label:'Auto-Unsubscribe on Bounce',desc:'Automatically suppress hard-bounced email addresses',val:contactSettings.autoUnsubEmail},cleansingRules:{label:'Data Cleansing Rules',desc:'Sanitise imported contact data on upload',val:contactSettings.cleansingRules},dedupeOnImport:{label:'Deduplicate on Import',desc:'Merge duplicate contacts by email on every import',val:contactSettings.dedupeOnImport},geoTracking:{label:'Geo-Location Tracking',desc:'Record contact location from campaign open events',val:contactSettings.geoTracking}}" :key="key" variant="flat" border rounded="xl" class="pa-4">
-                <div class="d-flex align-center justify-space-between">
-                  <div><div class="text-body-2 font-weight-bold">{{ val.label }}</div><div class="text-caption text-medium-emphasis">{{ val.desc }}</div></div>
-                  <v-switch :model-value="val.val" color="primary" hide-details density="compact" inset></v-switch>
-                </div>
-              </v-card>
+        <div v-else-if="selectedSetting==='contactsettings'">
+          <v-card variant="flat" rounded="xl" class="settings-panel-card">
+            <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">Contact Settings</div><div class="text-body-2 text-medium-emphasis">Global suppression, deduplication, and cleansing rules.</div></div>
+            <div class="settings-card-body">
+              <div class="d-flex flex-column gap-4">
+                <v-card v-for="(val, key) in {globalSuppression:{label:'Global Suppression List',desc:'Prevent unsubscribed contacts from being re-added',val:contactSettings.globalSuppression},autoUnsubEmail:{label:'Auto-Unsubscribe on Bounce',desc:'Automatically suppress hard-bounced email addresses',val:contactSettings.autoUnsubEmail},cleansingRules:{label:'Data Cleansing Rules',desc:'Sanitise imported contact data on upload',val:contactSettings.cleansingRules},dedupeOnImport:{label:'Deduplicate on Import',desc:'Merge duplicate contacts by email on every import',val:contactSettings.dedupeOnImport},geoTracking:{label:'Geo-Location Tracking',desc:'Record contact location from campaign open events',val:contactSettings.geoTracking}}" :key="key" variant="flat" rounded="xl" class="settings-panel-card pa-4">
+                  <div class="d-flex align-center justify-space-between">
+                    <div><div class="text-body-2 font-weight-bold">{{ val.label }}</div><div class="text-caption text-medium-emphasis">{{ val.desc }}</div></div>
+                    <v-switch :model-value="val.val" color="primary" hide-details density="compact" inset></v-switch>
+                  </div>
+                </v-card>
+              </div>
             </div>
-          </div>
-          <div class="pa-5 border-t d-flex justify-end"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
-        </v-card>
+          </v-card>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
+        </div>
 
         <!-- Campaign Settings ──────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='campaignsettings'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">Campaign Defaults</div><div class="text-body-2 text-medium-emphasis">Default sending configuration and tracking preferences.</div></div>
-          <div class="pa-6">
-            <v-row dense class="mb-4">
-              <v-col cols="12" sm="6"><v-text-field v-model="campaignSettings.defaultFromName" label="Default From Name" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="campaignSettings.defaultReplyTo" label="Default Reply-To Email" variant="outlined" density="comfortable"></v-text-field></v-col>
-              <v-col cols="12" sm="6"><v-text-field v-model="campaignSettings.testSubjectLine" label="Test Subject Prefix" variant="outlined" density="comfortable" placeholder="TEST - "></v-text-field></v-col>
-            </v-row>
-            <v-divider class="mb-4"></v-divider>
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Tracking</div>
-            <div class="d-flex flex-column gap-3">
-              <v-card v-for="(val, key) in {openTracking:{label:'Open Tracking',desc:'Insert tracking pixel to record email opens',val:campaignSettings.openTracking},clickTracking:{label:'Click Tracking',desc:'Rewrite links to track clicks through Maropost',val:campaignSettings.clickTracking},unsubLink:{label:'Unsubscribe Link Required',desc:'Always append unsubscribe footer to campaigns',val:campaignSettings.unsubLink}}" :key="key" variant="flat" border rounded="xl" class="pa-4">
-                <div class="d-flex align-center justify-space-between"><div><div class="text-body-2 font-weight-bold">{{ val.label }}</div><div class="text-caption text-medium-emphasis">{{ val.desc }}</div></div><v-switch :model-value="val.val" color="primary" hide-details density="compact" inset></v-switch></div>
-              </v-card>
+        <div v-else-if="selectedSetting==='campaignsettings'">
+          <v-card variant="flat" rounded="xl" class="settings-panel-card">
+            <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">Campaign Defaults</div><div class="text-body-2 text-medium-emphasis">Default sending configuration and tracking preferences.</div></div>
+            <div class="settings-card-body">
+              <v-row class="settings-field-row">
+                <v-col cols="12" sm="6"><v-text-field v-model="campaignSettings.defaultFromName" label="Default From Name" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="campaignSettings.defaultReplyTo" label="Default Reply-To Email" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="campaignSettings.testSubjectLine" label="Test Subject Prefix" variant="outlined" density="comfortable" placeholder="TEST - "></v-text-field></v-col>
+              </v-row>
+              <div class="settings-section-divider"></div>
+              <div class="settings-section-heading">Tracking</div>
+              <div class="d-flex flex-column gap-4">
+                <v-card v-for="(val, key) in {openTracking:{label:'Open Tracking',desc:'Insert tracking pixel to record email opens',val:campaignSettings.openTracking},clickTracking:{label:'Click Tracking',desc:'Rewrite links to track clicks through Maropost',val:campaignSettings.clickTracking},unsubLink:{label:'Unsubscribe Link Required',desc:'Always append unsubscribe footer to campaigns',val:campaignSettings.unsubLink}}" :key="key" variant="flat" rounded="xl" class="settings-panel-card pa-4">
+                  <div class="d-flex align-center justify-space-between"><div><div class="text-body-2 font-weight-bold">{{ val.label }}</div><div class="text-caption text-medium-emphasis">{{ val.desc }}</div></div><v-switch :model-value="val.val" color="primary" hide-details density="compact" inset></v-switch></div>
+                </v-card>
+              </div>
             </div>
-          </div>
-          <div class="pa-5 border-t d-flex justify-end"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
-        </v-card>
+          </v-card>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
+        </div>
 
         <!-- Notifications ──────────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='notifications'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">Notification Preferences</div><div class="text-body-2 text-medium-emphasis">Control which notifications you receive by email.</div></div>
-          <div class="pa-6">
-            <div class="d-flex flex-column gap-3">
-              <v-card v-for="(item, key) in notifications" :key="key" variant="flat" border rounded="xl" class="pa-4">
+        <div v-else-if="selectedSetting==='notifications'">
+          <v-card variant="flat" rounded="xl" class="settings-panel-card">
+            <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">Notification Preferences</div><div class="text-body-2 text-medium-emphasis">Control which notifications you receive by email.</div></div>
+            <div class="settings-card-body">
+              <div class="d-flex flex-column gap-4">
+                <v-card v-for="(item, key) in notifications" :key="key" variant="flat" rounded="xl" class="settings-panel-card pa-4">
+                  <div class="d-flex align-center justify-space-between">
+                    <div><div class="text-body-2 font-weight-bold">{{ item.label }}</div><div class="text-caption text-medium-emphasis">{{ item.desc }}</div></div>
+                    <v-switch v-model="notifications[key as keyof typeof notifications].value" color="primary" hide-details density="compact" inset></v-switch>
+                  </div>
+                </v-card>
+              </div>
+            </div>
+          </v-card>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Preferences</v-btn></div>
+        </div>
+
+        <!-- Service Settings ───────────────────────────────────── -->
+        <div v-else-if="selectedSetting==='servicesettings'">
+          <v-card variant="flat" rounded="xl" class="settings-panel-card">
+            <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">Service Settings</div><div class="text-body-2 text-medium-emphasis">Configure helpdesk, support email, SLA, and reply templates.</div></div>
+            <div class="settings-card-body">
+              <div class="settings-section-heading">Support Channel</div>
+              <v-row class="settings-field-row">
+                <v-col cols="12" sm="8"><v-text-field v-model="serviceSettings.supportEmail" label="Support Email Address" variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline"></v-text-field></v-col>
+                <v-col cols="12" sm="4"><v-text-field v-model="serviceSettings.ticketPrefix" label="Ticket ID Prefix" variant="outlined" density="comfortable" placeholder="TKT-"></v-text-field></v-col>
+                <v-col cols="12" sm="4"><v-text-field v-model.number="serviceSettings.slaHours" label="Default SLA (hours)" variant="outlined" density="comfortable" type="number"></v-text-field></v-col>
+                <v-col cols="12" sm="4"><v-select label="Default Priority" :items="['Low','Normal','High','Urgent']" model-value="Normal" variant="outlined" density="comfortable"></v-select></v-col>
+                <v-col cols="12" sm="4"><v-text-field label="Support Portal Name" model-value="Scooter Village Help Center" variant="outlined" density="comfortable"></v-text-field></v-col>
+              </v-row>
+              <v-card variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-6">
+                <div class="d-flex align-center justify-space-between"><div><div class="text-body-2 font-weight-bold">Auto-Assign Tickets</div><div class="text-caption text-medium-emphasis">Automatically assign new tickets to available agents</div></div><v-switch v-model="serviceSettings.autoAssign" color="primary" hide-details density="compact" inset></v-switch></div>
+              </v-card>
+              <div class="settings-section-divider"></div>
+              <div class="d-flex align-center justify-space-between mb-3">
+                <div class="settings-section-heading" style="margin-bottom: 0;">Reply Templates</div>
+                <v-btn size="small" variant="outlined" prepend-icon="mdi-plus" class="text-none">Add Template</v-btn>
+              </div>
+              <v-card v-for="t in replyTemplates" :key="t.id" variant="flat" rounded="xl" class="settings-panel-card pa-4 mb-3">
                 <div class="d-flex align-center justify-space-between">
-                  <div><div class="text-body-2 font-weight-bold">{{ item.label }}</div><div class="text-caption text-medium-emphasis">{{ item.desc }}</div></div>
-                  <v-switch v-model="notifications[key as keyof typeof notifications].value" color="primary" hide-details density="compact" inset></v-switch>
+                  <div><div class="text-body-2 font-weight-bold">{{ t.name }}</div><div class="text-caption text-medium-emphasis text-truncate" style="max-width:420px;">{{ t.preview }}</div></div>
+                  <div class="d-flex gap-1">
+                    <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small"></v-btn></template></v-tooltip>
+                    <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                  </div>
                 </div>
               </v-card>
             </div>
-          </div>
-          <div class="pa-5 border-t d-flex justify-end"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Preferences</v-btn></div>
-        </v-card>
-
-        <!-- Service Settings ───────────────────────────────────── -->
-        <v-card v-else-if="selectedSetting==='servicesettings'" variant="flat" border rounded="xl">
-          <div class="pa-6 border-b"><div class="text-h6 font-weight-bold mb-1">Service Settings</div><div class="text-body-2 text-medium-emphasis">Configure helpdesk, support email, SLA, and reply templates.</div></div>
-          <div class="pa-6">
-            <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Support Channel</div>
-            <v-row dense class="mb-4">
-              <v-col cols="12" sm="6"><v-text-field v-model="serviceSettings.supportEmail" label="Support Email Address" variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline"></v-text-field></v-col>
-              <v-col cols="12" sm="3"><v-text-field v-model="serviceSettings.ticketPrefix" label="Ticket ID Prefix" variant="outlined" density="comfortable" placeholder="TKT-"></v-text-field></v-col>
-              <v-col cols="12" sm="3"><v-text-field v-model.number="serviceSettings.slaHours" label="Default SLA (hours)" variant="outlined" density="comfortable" type="number"></v-text-field></v-col>
-            </v-row>
-            <v-card variant="flat" border rounded="xl" class="pa-4 mb-5">
-              <div class="d-flex align-center justify-space-between"><div><div class="text-body-2 font-weight-bold">Auto-Assign Tickets</div><div class="text-caption text-medium-emphasis">Automatically assign new tickets to available agents</div></div><v-switch v-model="serviceSettings.autoAssign" color="primary" hide-details density="compact" inset></v-switch></div>
-            </v-card>
-            <v-divider class="mb-4"></v-divider>
-            <div class="d-flex align-center justify-space-between mb-3">
-              <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis">Reply Templates</div>
-              <v-btn size="small" variant="outlined" prepend-icon="mdi-plus" class="text-none">Add Template</v-btn>
-            </div>
-            <v-card v-for="t in replyTemplates" :key="t.id" variant="flat" border rounded="xl" class="pa-4 mb-3">
-              <div class="d-flex align-center justify-space-between">
-                <div><div class="text-body-2 font-weight-bold">{{ t.name }}</div><div class="text-caption text-medium-emphasis text-truncate" style="max-width:420px;">{{ t.preview }}</div></div>
-                <div class="d-flex gap-1">
-                  <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small"></v-btn></template></v-tooltip>
-                  <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
-                </div>
-              </div>
-            </v-card>
-          </div>
-          <div class="pa-5 border-t d-flex justify-end"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
-        </v-card>
+          </v-card>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
+        </div>
 
       </div><!-- /detail panels -->
-    </div><!-- /scroll container -->
+    </div><!-- /right column: scroll container -->
+    </div><!-- /two-column layout -->
 
     <!-- Invite User Dialog -->
     <v-dialog v-model="addUserDialog" max-width="460" rounded="xl">
       <v-card rounded="xl">
-        <div class="pa-5 border-b d-flex align-center justify-space-between">
+        <div class="pa-5 pb-3 d-flex align-center justify-space-between">
           <div class="text-h6 font-weight-bold">Invite Team Member</div>
           <v-btn icon="mdi-close" variant="text" size="small" @click="addUserDialog=false"></v-btn>
         </div>
@@ -606,7 +616,7 @@ function save() { saveSnack.value = true }
           </div>
           <v-alert type="info" variant="tonal" density="compact" rounded="lg" class="text-body-2">The invitee will receive a sign-up link. Access is granted after they accept.</v-alert>
         </div>
-        <div class="pa-5 border-t d-flex justify-end gap-3">
+        <div class="pa-5 pt-3 d-flex justify-end gap-3">
           <v-btn variant="text" class="text-none" @click="addUserDialog=false">Cancel</v-btn>
           <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-email-send" :disabled="!newUserEmail">Send Invitation</v-btn>
         </div>
@@ -620,7 +630,118 @@ function save() { saveSnack.value = true }
   </div>
 </template>
 
-<style scoped>
-.border-b { border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
-.border-t { border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
+<style scoped lang="scss">
+/* ── Layout ─────────────────────────────────────── */
+.settings-layout {
+  gap: $mp-space-8;
+}
+
+/* ── Left nav ───────────────────────────────────── */
+.settings-nav {
+  width: 220px;
+  min-width: 220px;
+  padding-top: $mp-space-2;
+  padding-right: $mp-space-6;
+}
+.settings-nav :deep(.v-list-item--active) {
+  background: rgba(var(--v-theme-primary), 0.08) !important;
+  font-weight: $mp-typography-fontWeight-semibold;
+}
+.settings-nav :deep(.v-list-item--active)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: $mp-space-2;
+  bottom: $mp-space-2;
+  width: 3px;
+  background: rgb(var(--v-theme-primary));
+  border-radius: 0 $mp-radius-sm $mp-radius-sm 0;
+}
+
+/* ── Sub-tabs ───────────────────────────────────── */
+.settings-subtabs {
+  margin-bottom: $mp-space-6;
+}
+.settings-subtabs :deep(.v-tab) {
+  font-size: $mp-typography-fontSize-body;
+  font-weight: $mp-typography-fontWeight-medium;
+  letter-spacing: 0;
+  min-width: auto;
+  padding: 0 $mp-space-4;
+}
+.settings-subtabs :deep(.v-tab--selected) {
+  font-weight: $mp-typography-fontWeight-semibold;
+}
+
+/* ── Section headings ───────────────────────────── */
+.settings-section-heading {
+  font-size: $mp-typography-fontSize-body;
+  font-weight: $mp-typography-fontWeight-semibold;
+  color: rgb(var(--v-theme-on-surface));
+  margin-bottom: $mp-space-5;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Section dividers ───────────────────────────── */
+.settings-section-divider {
+  height: 1px;
+  background: rgba(var(--v-border-color), var(--v-border-opacity));
+  margin: $mp-space-8 0 $mp-space-6 0;
+}
+
+/* ── Sticky save bar ────────────────────────────── */
+.settings-save-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: $mp-space-5 $mp-space-8;
+  background: rgba(var(--v-theme-surface), 0.92);
+  backdrop-filter: blur(12px);
+}
+
+/* ── Panel cards ───────────────────────────────── */
+.settings-panel-card {
+  background: rgba(var(--v-theme-surface-variant), 0.25);
+}
+
+/* ── Card headers ──────────────────────────────── */
+.settings-card-header {
+  padding: $mp-space-8 $mp-space-8 $mp-space-4 $mp-space-8;
+}
+
+/* ── Card body ─────────────────────────────────── */
+.settings-card-body {
+  padding: $mp-space-6 $mp-space-8 $mp-space-8 $mp-space-8;
+}
+
+/* ── Field rows (proper gutter between fields) ── */
+.settings-field-row {
+  margin-inline: 0 !important;
+}
+.settings-field-row :deep(.v-col) {
+  padding-top: $mp-space-2;
+  padding-bottom: $mp-space-2;
+  padding-inline: $mp-space-3;
+}
+
+/* ── Billing plan banner ────────────────────────── */
+.billing-plan-banner {
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgba(var(--v-theme-secondary), 0.85) 100%);
+  border-radius: $mp-radius-xl;
+  padding: $mp-space-6 $mp-space-7;
+}
+.billing-plan-chip {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+  letter-spacing: 0.05em;
+}
+.billing-upgrade-btn {
+  color: rgb(var(--v-theme-primary)) !important;
+  font-weight: $mp-typography-fontWeight-semibold;
+}
+
+/* ── Utility ────────────────────────────────────── */
 </style>

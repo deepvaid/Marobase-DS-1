@@ -1,205 +1,215 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
+import { VCheckbox } from 'vuetify/components'
 
-const meta = {
-  title: 'Base/Selection Controls',
+interface SelectionControlsArgs {
+  label: string
+  modelValue: boolean
+  color: 'primary' | 'secondary' | 'success' | 'warning' | 'error'
+  disabled: boolean
+  indeterminate: boolean
+  hideDetails: boolean
+  trueIcon: string
+  falseIcon: string
+}
+
+const meta: Meta<SelectionControlsArgs> = {
+  title: 'Base/SelectionControls',
+  component: VCheckbox,
   tags: ['autodocs'],
+  argTypes: {
+    label: {
+      control: 'text',
+      description: 'Checkbox label text',
+      table: {
+        category: 'Content',
+        defaultValue: 'Toggle option',
+      },
+    },
+    modelValue: {
+      control: 'boolean',
+      description: 'Controlled checked state',
+      table: {
+        category: 'State',
+        defaultValue: false,
+      },
+    },
+    color: {
+      control: 'select',
+      options: ['primary', 'secondary', 'success', 'warning', 'error'],
+      description: 'Checkbox color',
+      table: {
+        category: 'Appearance',
+        defaultValue: 'primary',
+      },
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables the checkbox',
+      table: {
+        category: 'State',
+        defaultValue: false,
+      },
+    },
+    indeterminate: {
+      control: 'boolean',
+      description: 'Shows indeterminate state',
+      table: {
+        category: 'State',
+        defaultValue: false,
+      },
+    },
+    hideDetails: {
+      control: 'boolean',
+      description: 'Hide validation details',
+      table: {
+        category: 'Behavior',
+        defaultValue: true,
+      },
+    },
+    trueIcon: {
+      control: 'text',
+      description: 'Icon when checked (e.g., mdi-heart)',
+      table: {
+        category: 'Icons',
+        defaultValue: '',
+      },
+    },
+    falseIcon: {
+      control: 'text',
+      description: 'Icon when unchecked',
+      table: {
+        category: 'Icons',
+        defaultValue: '',
+      },
+    },
+  },
+  args: {
+    label: 'Toggle option',
+    modelValue: false,
+    color: 'primary',
+    disabled: false,
+    indeterminate: false,
+    hideDetails: true,
+    trueIcon: '',
+    falseIcon: '',
+  },
   parameters: {
     docs: {
       description: {
         component: `
-### Overview
-Selection controls (Checkboxes, Radios, Switches) allow users to select single or multiple options from different types of lists.
+# Selection Controls
 
-### 🟢 Do's
-- **Do** use **Checkboxes** when users can select multiple options, or for a single binary opt-in (like "I agree to Terms").
-- **Do** use **Radio buttons** when users must select exactly one option from a mutually exclusive list of choices.
-- **Do** use **Switches** when selecting an option causes an immediate action or state change (like turning Dark Mode on/off).
+Selection controls allow users to select one or more options from a set. They include checkboxes, radio buttons, and switches.
 
-### 🔴 Don'ts
-- **Don't** use a Switch if the user needs to click a "Save" or "Submit" button for the change to take effect. Use a Checkbox instead.
-- **Don't** arrange long lists of radio buttons horizontally. Arrange them vertically so they are easier to scan.
-- **Don't** hide the label. The label should always reside immediately next to the control so users understand what they are toggling.
+## Overview
 
-### 💡 Best Practices
-- **Clickable Area:** The label text must always be clickable to toggle the control. Never make users click exactly on the tiny circle/square.
-- **Indeterminate State:** Use the indeterminate checkbox state (\`-\`) when a parent grouping has some, but not all, of its children selected.
-- **Alignment:** When adding secondary descriptions beneath radio buttons or checkboxes, align the text with the label, not the button itself.
+Vuetify provides VCheckbox, VRadio, and VSwitch components for user selections. Checkboxes allow multiple selections, radio buttons allow single selection, and switches toggle between two states.
+
+## Do's
+
+- Use checkboxes for multiple selections
+- Use radio buttons for mutually exclusive choices
+- Use switches for on/off states
+- Label all selection controls clearly
+- Group related controls visually
+
+## Don'ts
+
+- Don't mix selection types in the same group
+- Avoid unlabeled selection controls
+- Don't use switches for multiple selections
+- Avoid too many options in one group
+
+## Best Practices
+
+- Use \`indeterminate\` state for "select all" checkboxes
+- Color checkboxes to match action meaning (error for delete)
+- Keep option labels concise
+- Use VCheckboxGroup or VRadioGroup for grouping
         `,
       },
     },
   },
-} satisfies Meta
+}
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-// ── Checkboxes ────────────────────────────────────────────────────────────────
+export const Playground: Story = {
+  render: (args) => ({
+    setup() {
+      const checked = ref(args.modelValue)
+      return { args, checked }
+    },
+    template: `
+      <div class="pa-6">
+        <v-checkbox
+          v-model="checked"
+          :label="args.label"
+          :color="args.color"
+          :disabled="args.disabled"
+          :indeterminate="args.indeterminate"
+          :hide-details="args.hideDetails"
+          :true-icon="args.trueIcon"
+          :false-icon="args.falseIcon"
+        />
+      </div>
+    `,
+  }),
+}
+
 export const Checkboxes: Story = {
+  parameters: { controls: { disable: true } },
   render: () => ({
     setup() {
-      const single = ref(false)
-      const indeterminate = ref(true)
-      const group = ref(['Email'])
-      return { single, indeterminate, group }
+      const items = ref(['Apple', 'Banana'])
+      return { items }
     },
     template: `
-      <div class="d-flex flex-column ga-6">
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">States</div>
-          <div class="d-flex flex-wrap ga-4">
-            <v-checkbox v-model="single" label="Unchecked" hide-details />
-            <v-checkbox :model-value="true" label="Checked" hide-details />
-            <v-checkbox :indeterminate="indeterminate" label="Indeterminate" hide-details />
-            <v-checkbox :model-value="true" label="Disabled" hide-details disabled />
-            <v-checkbox :model-value="false" label="Disabled unchecked" hide-details disabled />
-          </div>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Colors</div>
-          <div class="d-flex flex-wrap ga-4">
-            <v-checkbox :model-value="true" label="Primary" color="primary" hide-details />
-            <v-checkbox :model-value="true" label="Secondary" color="secondary" hide-details />
-            <v-checkbox :model-value="true" label="Success" color="success" hide-details />
-            <v-checkbox :model-value="true" label="Warning" color="warning" hide-details />
-            <v-checkbox :model-value="true" label="Error" color="error" hide-details />
-          </div>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Checkbox Group</div>
-          <v-checkbox-group v-model="group" hide-details>
-            <div class="d-flex flex-wrap ga-4">
-              <v-checkbox label="Email notifications" value="Email" color="primary" hide-details />
-              <v-checkbox label="SMS notifications" value="SMS" color="primary" hide-details />
-              <v-checkbox label="Push notifications" value="Push" color="primary" hide-details />
-              <v-checkbox label="Weekly digest" value="Digest" color="primary" hide-details />
-            </div>
-          </v-checkbox-group>
-          <div class="text-caption text-medium-emphasis mt-2">Selected: {{ group.join(', ') || 'none' }}</div>
-        </div>
+      <div class="pa-6">
+        <v-checkbox-group v-model="items" label="Fruits">
+          <v-checkbox label="Apple" value="Apple" />
+          <v-checkbox label="Banana" value="Banana" />
+          <v-checkbox label="Cherry" value="Cherry" />
+          <v-checkbox label="Date" value="Date" />
+        </v-checkbox-group>
       </div>
     `,
   }),
 }
 
-// ── Radio Buttons ─────────────────────────────────────────────────────────────
 export const RadioButtons: Story = {
+  parameters: { controls: { disable: true } },
   render: () => ({
     setup() {
-      const plan = ref('pro')
-      const color = ref('primary')
-      return { plan, color }
+      const selected = ref('Option 1')
+      return { selected }
     },
     template: `
-      <div class="d-flex flex-column ga-6">
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Inline Radio Group</div>
-          <v-radio-group v-model="plan" inline hide-details>
-            <v-radio label="Free" value="free" />
-            <v-radio label="Pro" value="pro" />
-            <v-radio label="Enterprise" value="enterprise" />
-          </v-radio-group>
-          <div class="text-caption text-medium-emphasis mt-2">Selected: {{ plan }}</div>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Vertical Radio Group</div>
-          <v-radio-group v-model="plan" hide-details>
-            <v-radio label="Free — Basic features, up to 500 contacts" value="free" color="primary" />
-            <v-radio label="Pro — Advanced automation, up to 10k contacts" value="pro" color="primary" />
-            <v-radio label="Enterprise — Unlimited everything + SLA" value="enterprise" color="primary" />
-          </v-radio-group>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Colors</div>
-          <v-radio-group v-model="color" inline hide-details>
-            <v-radio label="Primary" value="primary" color="primary" />
-            <v-radio label="Secondary" value="secondary" color="secondary" />
-            <v-radio label="Success" value="success" color="success" />
-            <v-radio label="Warning" value="warning" color="warning" />
-            <v-radio label="Error" value="error" color="error" />
-          </v-radio-group>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">States</div>
-          <v-radio-group inline hide-details>
-            <v-radio label="Normal" value="a" color="primary" />
-            <v-radio label="Disabled" value="b" color="primary" disabled />
-            <v-radio label="Checked disabled" value="c" color="primary" disabled :model-value="true" />
-          </v-radio-group>
-        </div>
+      <div class="pa-6">
+        <v-radio-group v-model="selected" label="Choose one">
+          <v-radio label="Option 1" value="Option 1" />
+          <v-radio label="Option 2" value="Option 2" />
+          <v-radio label="Option 3" value="Option 3" />
+        </v-radio-group>
       </div>
     `,
   }),
 }
 
-// ── Switches ──────────────────────────────────────────────────────────────────
 export const Switches: Story = {
+  parameters: { controls: { disable: true } },
   render: () => ({
     setup() {
       const notifications = ref(true)
       const darkMode = ref(false)
-      const marketing = ref(true)
-      const api = ref(false)
-      return { notifications, darkMode, marketing, api }
+      return { notifications, darkMode }
     },
     template: `
-      <div class="d-flex flex-column ga-6">
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">States</div>
-          <div class="d-flex flex-wrap ga-4">
-            <v-switch :model-value="false" label="Off" hide-details color="primary" />
-            <v-switch :model-value="true" label="On" hide-details color="primary" />
-            <v-switch :model-value="true" label="Disabled on" hide-details color="primary" disabled />
-            <v-switch :model-value="false" label="Disabled off" hide-details color="primary" disabled />
-          </div>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Colors</div>
-          <div class="d-flex flex-wrap ga-4">
-            <v-switch :model-value="true" label="Primary" hide-details color="primary" />
-            <v-switch :model-value="true" label="Secondary" hide-details color="secondary" />
-            <v-switch :model-value="true" label="Success" hide-details color="success" />
-            <v-switch :model-value="true" label="Warning" hide-details color="warning" />
-            <v-switch :model-value="true" label="Error" hide-details color="error" />
-          </div>
-        </div>
-
-        <div>
-          <div class="text-overline text-medium-emphasis mb-3">Notification Settings (realistic)</div>
-          <v-card variant="flat" border rounded="xl" style="max-width: 420px;">
-            <v-list lines="two">
-              <v-list-item title="Email Notifications" subtitle="Receive order updates via email">
-                <template #append>
-                  <v-switch v-model="notifications" hide-details color="primary" />
-                </template>
-              </v-list-item>
-              <v-divider style="opacity: 0.4" />
-              <v-list-item title="Marketing Emails" subtitle="Promotions, tips and product updates">
-                <template #append>
-                  <v-switch v-model="marketing" hide-details color="primary" />
-                </template>
-              </v-list-item>
-              <v-divider style="opacity: 0.4" />
-              <v-list-item title="Dark Mode" subtitle="Use dark theme across the app">
-                <template #append>
-                  <v-switch v-model="darkMode" hide-details color="primary" />
-                </template>
-              </v-list-item>
-              <v-divider style="opacity: 0.4" />
-              <v-list-item title="API Access" subtitle="Enable REST API for this account">
-                <template #append>
-                  <v-switch v-model="api" hide-details color="primary" />
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </div>
+      <div class="pa-6 space-y-4">
+        <v-switch v-model="notifications" label="Enable notifications" />
+        <v-switch v-model="darkMode" label="Dark mode" color="primary" />
       </div>
     `,
   }),

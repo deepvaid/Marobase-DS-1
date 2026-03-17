@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useContactsStore } from '@/stores/useContacts'
 import MpPageHeader from '@/components/MpPageHeader.vue'
 import MpStatusChip from '@/components/MpStatusChip.vue'
 import MpFormDrawer from '@/components/MpFormDrawer.vue'
 import MpDataTableToolbar from '@/components/MpDataTableToolbar.vue'
 
+const router = useRouter()
 const store = useContactsStore()
 const search = ref('')
 const searchActive = ref(false)
@@ -177,7 +179,7 @@ function selectAll() {
               {{ ((item as any).firstName?.[0] ?? '?') }}
             </v-avatar>
             <div>
-              <div class="text-body-2 font-weight-medium text-decoration-underline cursor-pointer">
+              <div class="text-body-2 font-weight-medium text-decoration-underline cursor-pointer" @click="router.push(`/contacts/${(item as any).id}`)">
                 {{ (item as any).firstName + ' ' + ((item as any).lastName ?? '') }}
               </div>
               <div class="text-caption text-medium-emphasis">{{ (item as any).email }}</div>
@@ -212,7 +214,7 @@ function selectAll() {
               <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-open-in-new" title="View" />
+              <v-list-item prepend-icon="mdi-open-in-new" title="View" @click="router.push(`/contacts/${(item as any).id}`)" />
               <v-list-item prepend-icon="mdi-pencil-outline" title="Edit" />
               <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" />
               <v-divider class="my-1" style="opacity: 0.4" />

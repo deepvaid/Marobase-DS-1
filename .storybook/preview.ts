@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/vue3'
 import { setup } from '@storybook/vue3'
 import { createPinia } from 'pinia'
 
-// Vuetify
+// Vuetify — full import to ensure all component styles are available in stories
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -126,21 +126,29 @@ const preview: Preview = {
     theme: 'maropostLight',
   },
   decorators: [
-    (story, context) => {
-      const themeName = context.globals.theme || 'maropostLight'
-      return {
-        components: { story },
-        template: `
-          <v-app>
-            <v-theme-provider :theme="'${themeName}'">
-              <v-main class="pa-6" style="background: rgb(var(--v-theme-background));">
-                <story />
-              </v-main>
-            </v-theme-provider>
-          </v-app>
-        `,
-      }
-    },
+    (story, context) => ({
+      components: { story },
+      // Use setup() so the theme binding is truly reactive when toggled in the toolbar.
+      // Crucially we use a plain <div> instead of <v-main> — v-main is a Vuetify layout
+      // container that registers itself with the layout system and sets CSS variables
+      // (--v-layout-left/right/top/bottom) that confuse v-dialog and v-navigation-drawer
+      // overlay positioning in the Storybook iframe environment.
+      setup() {
+        return { sbTheme: context.globals.theme || 'maropostLight' }
+      },
+      template: `
+        <v-app>
+          <v-theme-provider :theme="sbTheme">
+            <div
+              class="pa-6"
+              style="background: rgb(var(--v-theme-background)); min-height: 100vh; width: 100%;"
+            >
+              <story />
+            </div>
+          </v-theme-provider>
+        </v-app>
+      `,
+    }),
   ],
   parameters: {
     layout: 'fullscreen',

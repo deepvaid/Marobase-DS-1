@@ -126,20 +126,12 @@ const navGroups: NavGroup[] = [
   {
     title: 'Settings',
     icon: 'mdi-cog-outline',
-    items: [
-      { title: 'All Settings', route: '/settings' },
-      { title: 'Users',        route: '/users' },
-      { title: 'Billing',      route: '/billing' },
-      { title: 'Profile',      route: '/profile' },
-    ]
+    singleRoute: '/settings',
+    items: []
   },
 ]
 
 const marketingGroups = ['Campaigns', 'Acquisition', 'Automation', 'Content']
-
-const accountName = ref('MMC-MSC-MCC Scooter Village')
-const userName = ref('Deepak Vaidya')
-const userInitials = ref('DV')
 
 const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
@@ -152,7 +144,7 @@ const localRail = ref(props.rail)
     permanent
     width="260"
     class="mp-sidebar"
-    style="background: var(--mp-color-sidebar-bg); border-right: 1px solid var(--mp-color-sidebar-border);"
+    style="background: var(--mp-color-sidebar-bg);"
   >
     <!-- Logo + collapse toggle -->
     <div class="d-flex align-center px-3 py-3" style="height: var(--mp-layout-appbarHeight);">
@@ -176,24 +168,7 @@ const localRail = ref(props.rail)
       </template>
     </div>
 
-    <v-divider style="border-color: var(--mp-color-sidebar-border);" />
-
-    <!-- Account selector -->
-    <div v-if="!localRail" class="px-3 py-2">
-      <v-card variant="flat" rounded="lg" class="pa-2 cursor-pointer" style="background: var(--mp-color-sidebar-hover);">
-        <div class="d-flex align-center gap-2">
-          <v-avatar color="primary" size="28" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold);">{{ userInitials }}</v-avatar>
-          <div class="flex-grow-1 overflow-hidden">
-            <div class="text-caption font-weight-medium text-truncate" style="color: var(--mp-color-sidebar-text); line-height: var(--mp-typography-lineHeight-tight);">{{ accountName }}</div>
-            <div class="text-caption text-truncate" style="color: var(--mp-color-sidebar-textMuted); font-size: var(--mp-typography-fontSize-xs);">{{ userName }}</div>
-          </div>
-          <v-icon size="14" style="color: var(--mp-color-sidebar-textFaint);">mdi-chevron-down</v-icon>
-        </div>
-      </v-card>
-    </div>
-    <div v-else class="d-flex justify-center py-2">
-      <v-avatar color="primary" size="32" class="cursor-pointer" style="font-size: var(--mp-typography-fontSize-sm); font-weight: var(--mp-typography-fontWeight-bold);">{{ userInitials }}</v-avatar>
-    </div>
+    <div class="my-1" />
 
     <!-- Full Navigation (expanded mode) -->
     <v-list density="compact" nav class="px-2 py-1" v-if="!localRail" style="overflow-y: auto;">
@@ -285,7 +260,7 @@ const localRail = ref(props.rail)
             class="mb-1 justify-center"
           />
         </template>
-        <v-card width="220" elevation="8" rounded="xl" style="background: var(--mp-color-sidebar-surface); border: 1px solid var(--mp-color-sidebar-border);">
+        <v-card width="220" elevation="8" rounded="xl" style="background: var(--mp-color-sidebar-surface);">
           <v-list density="compact" class="bg-transparent py-1">
             <v-list-subheader style="color: var(--mp-color-sidebar-textMuted); font-size: var(--mp-typography-fontSize-xs);">{{ group.title }}</v-list-subheader>
             <template v-if="group.singleRoute">
@@ -310,7 +285,7 @@ const localRail = ref(props.rail)
 
     <!-- Bottom: Help -->
     <template v-slot:append>
-      <v-divider style="border-color: var(--mp-color-sidebar-border);" />
+      <div class="my-1" />
       <div class="pa-2" v-if="!localRail">
         <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start" style="color: var(--mp-color-sidebar-textFaint); font-size: var(--mp-typography-fontSize-body);">
           Help & Documentation

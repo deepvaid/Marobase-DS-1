@@ -1,0 +1,56 @@
+:root,
+:root[data-theme='light'],
+html[data-theme='light'],
+html.theme-light {
+  --mb-tabs-font-family: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
+  --mb-tabs-list-gap: 12px;
+  --mb-tabs-tab-height: 40px;
+  --mb-tabs-tab-padding-x: 6px;
+  --mb-tabs-tab-padding-y: 10px;
+  --mb-tabs-tab-gap: 6px;
+  --mb-tabs-label-size: 14px;
+  --mb-tabs-label-line-height: 20px;
+  --mb-tabs-label-weight: 500;
+  --mb-tabs-letter-spacing: 0px;
+  --mb-tabs-icon-size: 24px;
+  --mb-tabs-dot-size: 7px;
+  --mb-tabs-badge-height: 18px;
+  --mb-tabs-badge-padding-x: 4px;
+  --mb-tabs-badge-size: 12px;
+  --mb-tabs-badge-line-height: 18px;
+  --mb-tabs-badge-weight: 600;
+  --mb-tabs-active-border-size: 2px;
+  --mb-tabs-border-overlap: 1px;
+  --mb-tabs-focus-radius: 6px;
+
+  --mb-tabs-border-color: #e6e8eb;
+  --mb-tabs-tab-color: #7d868c;
+  --mb-tabs-tab-hover-color: #11181c;
+  --mb-tabs-tab-active-color: #11181c;
+  --mb-tabs-tab-disabled-color: #9aa3aa;
+  --mb-tabs-active-border-color: #0091ff;
+  --mb-tabs-dot-color: #e54d2e;
+  --mb-tabs-badge-bg: #0091ff;
+  --mb-tabs-badge-border: #ffffff;
+  --mb-tabs-badge-color: #ffffff;
+  --mb-tabs-badge-disabled-bg: #d7dde4;
+  --mb-tabs-focus-ring: 0 0 0 3px #cde6fe;
+}
+
+:root[data-theme='dark'],
+html[data-theme='dark'],
+html.theme-dark,
+html.v-theme--dark {
+  --mb-tabs-border-color: #2a3342;
+  --mb-tabs-tab-color: #97a3b5;
+  --mb-tabs-tab-hover-color: #e5eaf2;
+  --mb-tabs-tab-active-color: #e5eaf2;
+  --mb-tabs-tab-disabled-color: #617084;
+  --mb-tabs-active-border-color: #89a8ff;
+  --mb-tabs-dot-color: #ff8f7a;
+  --mb-tabs-badge-bg: #4f8bff;
+  --mb-tabs-badge-border: #0f141c;
+  --mb-tabs-badge-color: #e5eaf2;
+  --mb-tabs-badge-disabled-bg: #334153;
+  --mb-tabs-focus-ring: 0 0 0 3px #304d84;
+}

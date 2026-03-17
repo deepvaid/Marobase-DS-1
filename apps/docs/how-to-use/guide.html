@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Design QA - How To Use</title>
+    <style>
+      :root {
+        --brand-900: #123151;
+        --brand-700: #1f4bd8;
+        --line: #d9e3f4;
+        --surface: #f4f8ff;
+        --text: #10243f;
+        --muted: #4f6079;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
+        color: var(--text);
+        background: #edf4ff;
+      }
+
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        padding: 12mm;
+        background: #ffffff;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: #fff;
+        background: linear-gradient(125deg, var(--brand-900), var(--brand-700));
+      }
+
+      .mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        color: var(--brand-900);
+        background: #fff;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .subtitle {
+        margin: 2px 0 0;
+        font-size: 13px;
+        color: #dce8ff;
+      }
+
+      .layout {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 12px;
+      }
+
+      .steps,
+      .notes {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px;
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--brand-700);
+      }
+
+      ol {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      li + li {
+        margin-top: 4px;
+      }
+
+      .notes p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      .shots {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      figure {
+        margin: 0;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--surface);
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: 165px;
+        object-fit: cover;
+        object-position: top;
+        background: #ffffff;
+      }
+
+      figcaption {
+        padding: 6px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #27456f;
+        background: #f7faff;
+      }
+
+      .foot {
+        margin-top: 8px;
+        font-size: 10.5px;
+        color: #667894;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <div class="mark">S</div>
+        <div>
+          <h1>Simple Design QA - Quick How-To</h1>
+          <p class="subtitle">Capture UX feedback and export issue logs as ZIP</p>
+        </div>
+      </header>
+
+      <section class="layout">
+        <article class="steps">
+          <h2>Workflow</h2>
+          <ol>
+            <li>Open your app screen and click the <strong>Simple Design QA</strong> extension icon.</li>
+            <li>Confirm auto-filled context: <strong>Page Name</strong>, <strong>URL</strong>, and <strong>Timestamp</strong>.</li>
+            <li>Select <strong>Severity</strong> and <strong>Feedback Type</strong>.</li>
+            <li>Enter a clear issue description in <strong>Feedback</strong>.</li>
+            <li>Optional: click <strong>Pick Area</strong> and select the on-page container where the issue appears.</li>
+            <li>Optional: add a <strong>Suggested Reference Link</strong> (plain domains are accepted).</li>
+            <li>Click <strong>Save</strong> for each issue.</li>
+            <li>Use <strong>View Logs</strong> for filter/search/delete and <strong>Export SDQA ZIP</strong> at end of QA.</li>
+          </ol>
+        </article>
+
+        <aside class="notes">
+          <h2>Tips</h2>
+          <p>
+            Use concise, reproducible feedback and keep one issue per log entry. Mark only release-blocking issues as
+            <strong>Blocker</strong>. Export creates an <strong>SDQA_...</strong> ZIP with HTML, CSV, and screenshot
+            files for easy sharing.
+          </p>
+        </aside>
+      </section>
+
+      <section class="shots">
+        <figure>
+          <img src="./images/popup-filled.png" alt="Popup with filled form" />
+          <figcaption>1) Filled popup ready to save</figcaption>
+        </figure>
+        <figure>
+          <img src="./images/popup-container.png" alt="Popup with selected container" />
+          <figcaption>2) Container pinpoint captured</figcaption>
+        </figure>
+        <figure>
+          <img src="./images/options-logs.png" alt="Options page log table" />
+          <figcaption>3) Logs view with filters and table</figcaption>
+        </figure>
+        <figure>
+          <img src="./images/popup-download.png" alt="Popup CSV download status" />
+          <figcaption>4) CSV export status confirmation</figcaption>
+        </figure>
+      </section>
+
+      <p class="foot">Generated from the extension source in <code>apps/simple-design-qa</code>.</p>
+    </main>
+  </body>
+</html>

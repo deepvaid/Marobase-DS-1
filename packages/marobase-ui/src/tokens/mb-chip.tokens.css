@@ -1,0 +1,45 @@
+:root,
+:root[data-theme='light'],
+html[data-theme='light'],
+html.theme-light {
+  --mb-chip-font-family: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
+  --mb-chip-font-size: 14px;
+  --mb-chip-line-height: 20px;
+  --mb-chip-font-weight: 500;
+  --mb-chip-letter-spacing: 0px;
+  --mb-chip-gap: 6px;
+  --mb-chip-padding-x: 12px;
+  --mb-chip-padding-y: 6px;
+  --mb-chip-radius: 999px;
+
+  --mb-chip-bg: #f0f2f4;
+  --mb-chip-text: #11181c;
+  --mb-chip-bg-brand: #edf5ff;
+  --mb-chip-text-brand: #0068cc;
+  --mb-chip-bg-danger: #fff1f0;
+  --mb-chip-text-danger: #e54d2e;
+  --mb-chip-selected-border: #0091ff;
+
+  --mb-chip-hover-ring: 0 0 0 2px #d9dde1;
+  --mb-chip-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-chip-focus-outline: #cde6fe;
+  --mb-chip-dismiss-hover-bg: rgba(17, 24, 28, 0.08);
+}
+
+:root[data-theme='dark'],
+html[data-theme='dark'],
+html.theme-dark,
+html.v-theme--dark {
+  --mb-chip-bg: #1f2b39;
+  --mb-chip-text: #e5eaf2;
+  --mb-chip-bg-brand: #223756;
+  --mb-chip-text-brand: #8ec0ff;
+  --mb-chip-bg-danger: #3f2327;
+  --mb-chip-text-danger: #ff9f8c;
+  --mb-chip-selected-border: #4da3ff;
+
+  --mb-chip-hover-ring: 0 0 0 2px #3c4e66;
+  --mb-chip-focus-ring: 0 0 0 3px #375891;
+  --mb-chip-focus-outline: #4b73b4;
+  --mb-chip-dismiss-hover-bg: rgba(229, 234, 242, 0.12);
+}

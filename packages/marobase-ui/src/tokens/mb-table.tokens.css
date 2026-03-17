@@ -1,0 +1,104 @@
+:root,
+:root[data-theme='light'],
+html[data-theme='light'],
+html.theme-light {
+  --mb-table-font-family: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
+  --mb-table-letter-spacing: 0px;
+  --mb-table-radius: 8px;
+
+  --mb-table-bg: #ffffff;
+  --mb-table-border: #e6e8eb;
+  --mb-table-row-border: #e6e8eb;
+  --mb-table-row-striped: #f9fafb;
+  --mb-table-row-hover: #f0f2f4;
+  --mb-table-row-selected: #edf5ff;
+
+  --mb-table-text: #11181c;
+  --mb-table-muted: #7d868c;
+  --mb-table-header: #11181c;
+  --mb-table-sort: #11181c;
+
+  --mb-table-header-size: 14px;
+  --mb-table-header-line-height: 20px;
+  --mb-table-header-weight: 400;
+  --mb-table-cell-size: 14px;
+  --mb-table-cell-line-height: 20px;
+  --mb-table-cell-weight: 400;
+
+  --mb-table-checkbox-bg: #ffffff;
+  --mb-table-checkbox-border: #c1c8cd;
+  --mb-table-checkbox-border-hover: #aab4bc;
+  --mb-table-checkbox-mark: #0091ff;
+
+  --mb-table-avatar-bg: #889096;
+  --mb-table-avatar-text: #ffffff;
+
+  --mb-table-status-success-bg: #edf8ef;
+  --mb-table-status-success-border: #caebd2;
+  --mb-table-status-success-text: #2d9f4d;
+  --mb-table-status-additional-bg: #f4ecfb;
+  --mb-table-status-additional-border: #e3d4f5;
+  --mb-table-status-additional-text: #8e4ec6;
+  --mb-table-status-neutral-bg: #f0f2f4;
+  --mb-table-status-neutral-border: #dde1e4;
+  --mb-table-status-neutral-text: #7d868c;
+
+  --mb-table-action-hover-bg: #eef1f5;
+
+  --mb-table-pagination-border: #c1c8cd;
+  --mb-table-pagination-bg: #ffffff;
+  --mb-table-pagination-text: #11181c;
+  --mb-table-pagination-active-bg: #f0f2f4;
+  --mb-table-pagination-hover-bg: #f5f7f9;
+
+  --mb-table-select-bg: #ffffff;
+  --mb-table-select-border: #c1c8cd;
+  --mb-table-focus-ring: 0 0 0 3px #cde6fe;
+}
+
+:root[data-theme='dark'],
+html[data-theme='dark'],
+html.theme-dark,
+html.v-theme--dark {
+  --mb-table-bg: #111821;
+  --mb-table-border: #314255;
+  --mb-table-row-border: #314255;
+  --mb-table-row-striped: #151f2b;
+  --mb-table-row-hover: #1d2a39;
+  --mb-table-row-selected: #1f3250;
+
+  --mb-table-text: #e5eaf2;
+  --mb-table-muted: #97a3b5;
+  --mb-table-header: #cbd6e4;
+  --mb-table-sort: #cbd6e4;
+
+  --mb-table-checkbox-bg: #162231;
+  --mb-table-checkbox-border: #546b88;
+  --mb-table-checkbox-border-hover: #6d87ab;
+  --mb-table-checkbox-mark: #8ec0ff;
+
+  --mb-table-avatar-bg: #4f6178;
+  --mb-table-avatar-text: #ffffff;
+
+  --mb-table-status-success-bg: #1f372a;
+  --mb-table-status-success-border: #3b7d55;
+  --mb-table-status-success-text: #8be0a8;
+  --mb-table-status-additional-bg: #2f2642;
+  --mb-table-status-additional-border: #5a4a82;
+  --mb-table-status-additional-text: #d3b6f6;
+  --mb-table-status-neutral-bg: #273547;
+  --mb-table-status-neutral-border: #3f526b;
+  --mb-table-status-neutral-text: #a6b5c8;
+
+  --mb-table-action-hover-bg: #28384b;
+
+  --mb-table-pagination-border: #415369;
+  --mb-table-pagination-bg: #111821;
+  --mb-table-pagination-text: #e5eaf2;
+  --mb-table-pagination-active-bg: #233247;
+  --mb-table-pagination-hover-bg: #28384b;
+
+  --mb-table-select-bg: #111821;
+  --mb-table-select-border: #415369;
+  --mb-table-focus-ring: 0 0 0 3px #3a5f96;
+}

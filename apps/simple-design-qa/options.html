@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Design QA - Logs</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="card pageHeader">
+        <div class="brandMeta">
+          <div class="brandMark">S</div>
+          <div>
+            <h1>Simple Design QA Logs</h1>
+            <p>Review, filter, and clean up captured feedback entries.</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="card filtersCard">
+        <div class="cardHeader">
+          <h2>Filters</h2>
+          <p>Narrow results by severity, type, and search query.</p>
+        </div>
+
+        <div class="filterGrid">
+          <label class="field" for="severityFilter">
+            <span class="fieldLabel">Severity</span>
+            <select id="severityFilter">
+              <option value="">All</option>
+              <option value="Blocker">Blocker</option>
+              <option value="Major">Major</option>
+              <option value="Minor">Minor</option>
+            </select>
+          </label>
+
+          <label class="field" for="feedbackTypeFilter">
+            <span class="fieldLabel">Feedback Type</span>
+            <select id="feedbackTypeFilter">
+              <option value="">All</option>
+              <option value="Table">Table</option>
+              <option value="Form">Form</option>
+              <option value="Dashboard Widget">Dashboard Widget</option>
+              <option value="Navigation">Navigation</option>
+              <option value="Content/Copy">Content/Copy</option>
+              <option value="Accessibility">Accessibility</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label class="field" for="searchInput">
+            <span class="fieldLabel">Search</span>
+            <input id="searchInput" type="search" placeholder="Search page title or feedback" />
+          </label>
+        </div>
+      </section>
+
+      <p id="summary"></p>
+
+      <section class="card tableCard">
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Page Name</th>
+                <th>URL</th>
+                <th>Severity</th>
+                <th>Feedback Type</th>
+                <th>Feedback</th>
+                <th>Container</th>
+                <th>Reference Link</th>
+                <th>Screenshot</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="logsBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="imageModal" class="modalBackdrop" hidden>
+      <div class="modalCard" role="dialog" aria-modal="true" aria-label="Screenshot Preview">
+        <div class="modalActions">
+          <button id="closeImageModal" type="button" class="btn btn-secondary">Close</button>
+        </div>
+        <p id="modalHint" class="modalHint" hidden></p>
+        <img id="modalImage" alt="Simple Design QA screenshot preview" />
+      </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

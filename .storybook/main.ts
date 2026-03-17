@@ -5,27 +5,21 @@ import { fileURLToPath } from 'node:url'
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: [
+    '@storybook/addon-docs',
     '@storybook/addon-themes',
-    '@storybook/addon-essentials',
   ],
-  framework: {
-    name: '@storybook/vue3-vite',
-    options: {},
-  },
+  framework: '@storybook/vue3-vite',
   viteFinal: async (config) => {
     const srcDir = fileURLToPath(new URL('../src', import.meta.url))
 
     config.plugins?.push(
       vuetify({ autoImport: true })
     )
-    // Ensure @ alias works in Storybook
     config.resolve = config.resolve || {}
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': srcDir,
     }
-    // Mirror main vite.config.ts SCSS preprocessor options.
-    // Use absolute path so Sass resolves it without needing the @ alias.
     config.css = config.css || {}
     config.css.preprocessorOptions = config.css.preprocessorOptions || {}
     config.css.preprocessorOptions.scss = {
@@ -34,7 +28,10 @@ const config: StorybookConfig = {
     }
     return config
   },
-  docs: { autodocs: 'tag' },
+  tags: ['autodocs'],
+  docs: {
+    defaultName: 'Docs',
+  },
 }
 
 export default config

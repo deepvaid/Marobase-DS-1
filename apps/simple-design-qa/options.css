@@ -1,0 +1,319 @@
+:root {
+  color-scheme: light;
+  --background: #f8fafc;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --foreground: #0f172a;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --ring: #3b82f6;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Avenir Next", "Segoe UI", "Trebuchet MS", sans-serif;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 22px;
+  display: grid;
+  gap: 10px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.pageHeader {
+  padding: 14px 16px;
+}
+
+.brandMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brandMark {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e3a8a;
+  background: #dbeafe;
+  border: 1px solid #bfdbfe;
+}
+
+.pageHeader h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.pageHeader p {
+  margin: 3px 0 0;
+  color: var(--muted-foreground);
+}
+
+.filtersCard {
+  padding: 14px;
+}
+
+.cardHeader h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.cardHeader p {
+  margin: 2px 0 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+
+.filterGrid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+input,
+select,
+button,
+a {
+  font: inherit;
+}
+
+input,
+select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--foreground);
+  padding: 8px 10px;
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+#summary {
+  margin: 0 2px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tableCard {
+  overflow: hidden;
+}
+
+.tableWrap {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1160px;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  padding: 11px 10px;
+  font-size: 13px;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 12px;
+  color: #1e293b;
+}
+
+tbody tr:nth-child(even) {
+  background: #fbfcfe;
+}
+
+tbody tr:hover {
+  background: #f8fbff;
+}
+
+a {
+  color: #1d4ed8;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.severityBadge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.severityBadge.sev-blocker {
+  color: #991b1b;
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+
+.severityBadge.sev-major {
+  color: #92400e;
+  background: #ffedd5;
+  border-color: #fed7aa;
+}
+
+.severityBadge.sev-minor {
+  color: #166534;
+  background: #dcfce7;
+  border-color: #bbf7d0;
+}
+
+.actionsCell {
+  width: 96px;
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.btn-sm {
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.btn-secondary {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: var(--border);
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+}
+
+.btn-destructive {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.btn-destructive:hover {
+  background: #b91c1c;
+}
+
+.emptyCell {
+  color: var(--muted-foreground);
+  text-align: center;
+  padding: 18px;
+  background: #fcfdff;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.56);
+}
+
+.modalBackdrop[hidden] {
+  display: none !important;
+}
+
+.modalCard {
+  width: min(980px, calc(100vw - 40px));
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+  padding: 12px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.modalHint {
+  margin: 0 0 10px;
+  border: 1px solid #facc15;
+  background: #fef9c3;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  color: #713f12;
+  font-size: 13px;
+}
+
+#modalImage {
+  display: block;
+  max-width: min(950px, 94vw);
+  max-height: 78vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 14px;
+  }
+
+  .pageHeader h1 {
+    font-size: 20px;
+  }
+}

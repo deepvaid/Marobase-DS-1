@@ -1,0 +1,12 @@
+Simple Design QA - Chrome Web Store Upload Assets
+
+Screenshots (1280x800 JPEG):
+- docs/chrome-web-store/screenshots/01-popup-core.jpg
+- docs/chrome-web-store/screenshots/02-popup-evidence.jpg
+- docs/chrome-web-store/screenshots/03-options-logs.jpg
+
+Promo tiles:
+- Small (440x280 JPEG): docs/chrome-web-store/promo/small-promo-440x280.jpg
+- Marquee (1400x560 JPEG): docs/chrome-web-store/promo/marquee-promo-1400x560.jpg
+
+Optional ZIP package: /Users/deepakvaidya/Documents/marobase/artifacts/simple-design-qa-cws-assets.zip

@@ -21,6 +21,7 @@ const routes = [
 
   // 3. Contacts (Audience)
   { path: '/contacts', name: 'AllContacts', component: () => import('@/views/Contacts/AllContacts.vue') },
+  { path: '/contacts/:id', name: 'ContactDetail', component: () => import('@/views/Contacts/ContactDetail.vue') },
   { path: '/lists', name: 'ContactLists', component: () => import('@/views/Contacts/ContactLists.vue') },
   { path: '/segmentations', name: 'Segments', component: () => import('@/views/Contacts/Segments.vue') },
   { path: '/contacts/fields', name: 'ContactFields', component: () => import('@/views/Contacts/ContactFields.vue') },
@@ -77,11 +78,11 @@ const routes = [
   // 9. Integrations
   { path: '/integrations', name: 'Integrations', component: () => import('@/views/Integrations/Integrations.vue') },
 
-  // 10. Settings & User Account
+  // 10. Settings & User Account (all panels live inside /settings)
   { path: '/settings', name: 'Settings', component: () => import('@/views/Settings/Settings.vue') },
-  { path: '/billing', name: 'Billing', component: () => import('@/views/Settings/Billing.vue') },
-  { path: '/users', name: 'Users', component: () => import('@/views/Settings/Users.vue') },
-  { path: '/profile', name: 'Profile', component: () => import('@/views/Settings/Profile.vue') },
+  { path: '/billing', redirect: '/settings' },
+  { path: '/users', redirect: '/settings' },
+  { path: '/profile', redirect: '/settings' },
 
   // Redirect root to dashboard
   { path: '/', redirect: '/dashboard' },

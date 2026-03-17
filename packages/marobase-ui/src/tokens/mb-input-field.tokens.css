@@ -1,0 +1,69 @@
+:root,
+:root[data-theme='light'],
+html[data-theme='light'],
+html.theme-light {
+  --mb-if-font-family: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
+  --mb-if-letter-spacing: 0px;
+
+  --mb-if-label-size: 16px;
+  --mb-if-label-line-height: 24px;
+  --mb-if-label-weight: 500;
+  --mb-if-label-color: #11181c;
+  --mb-if-label-gap: 12px;
+  --mb-if-required-size: 14px;
+  --mb-if-required-line-height: 20px;
+  --mb-if-required-color: #e54d2e;
+
+  --mb-if-control-height: 48px;
+  --mb-if-control-gap: 12px;
+  --mb-if-control-padding-x: 16px;
+  --mb-if-control-padding-y: 12px;
+  --mb-if-radius: 6px;
+  --mb-if-bg: #ffffff;
+  --mb-if-bg-disabled: #f5f7f9;
+  --mb-if-border: #c1c8cd;
+  --mb-if-border-hover: #aeb8bf;
+  --mb-if-border-focus: #0091ff;
+  --mb-if-border-error: #e54d2e;
+  --mb-if-focus-ring: 0 0 0 3px #cde6fe;
+
+  --mb-if-value-size: 16px;
+  --mb-if-value-line-height: 24px;
+  --mb-if-value-weight: 400;
+  --mb-if-value-color: #11181c;
+  --mb-if-addon-color: #7d868c;
+  --mb-if-placeholder-color: #7d868c;
+  --mb-if-icon-color: #7d868c;
+  --mb-if-icon-size: 24px;
+  --mb-if-icon-stroke: 2px;
+  --mb-if-icon-corner: 4px;
+  --mb-if-rhombus-size: 14px;
+
+  --mb-if-message-gap: 8px;
+  --mb-if-message-size: 14px;
+  --mb-if-message-line-height: 20px;
+  --mb-if-hint-color: #889096;
+  --mb-if-error-color: #e54d2e;
+  --mb-if-disabled-text: #9aa3aa;
+}
+
+:root[data-theme='dark'],
+html[data-theme='dark'],
+html.theme-dark,
+html.v-theme--dark {
+  --mb-if-label-color: #e5eaf2;
+  --mb-if-bg: #121923;
+  --mb-if-bg-disabled: #1a2430;
+  --mb-if-border: #405978;
+  --mb-if-border-hover: #5678b8;
+  --mb-if-border-focus: #89a8ff;
+  --mb-if-border-error: #ff8f7a;
+  --mb-if-focus-ring: 0 0 0 3px #304d84;
+  --mb-if-value-color: #e5eaf2;
+  --mb-if-addon-color: #c5cfde;
+  --mb-if-placeholder-color: #97a3b5;
+  --mb-if-icon-color: #c5cfde;
+  --mb-if-hint-color: #97a3b5;
+  --mb-if-error-color: #ff8f7a;
+  --mb-if-disabled-text: #617084;
+}

@@ -8,6 +8,9 @@ const theme = useTheme()
 const notificationCount = ref(18)
 const userName = ref('Deepak Vaidya')
 const userInitials = ref('DV')
+const userEmail = ref('deepak.v@maropost.com')
+const userRole = ref('Super Admin')
+const accountName = ref('MMC-MSC-MCC Scooter Village')
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'maropostLight' : 'maropostDark'
@@ -15,7 +18,7 @@ function toggleTheme() {
 </script>
 
 <template>
-  <v-app-bar height="56" color="surface" class="border-b">
+  <v-app-bar height="56" color="surface" flat>
     <div class="w-100 d-flex align-center px-4 gap-3">
       <!-- Global search -->
       <v-text-field
@@ -29,6 +32,51 @@ function toggleTheme() {
         style="max-width: var(--mp-layout-searchMaxWidth);"
         bg-color="surface-variant"
       />
+
+      <!-- Account switcher -->
+      <v-menu location="bottom start" offset="8">
+        <template v-slot:activator="{ props }">
+          <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 pl-2 rounded-lg account-switcher-trigger">
+            <v-avatar color="primary" size="26" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
+            <div class="d-none d-md-block" style="line-height: 1.2;">
+              <div class="text-caption font-weight-medium text-truncate" style="max-width: 160px;">{{ accountName }}</div>
+              <div class="text-caption text-medium-emphasis" style="font-size: var(--mp-typography-fontSize-xs);">{{ userName }}</div>
+            </div>
+            <v-icon size="14" color="medium-emphasis">mdi-chevron-down</v-icon>
+          </div>
+        </template>
+        <v-card width="320" rounded="xl" elevation="8" class="account-switcher-card">
+          <!-- Current account header -->
+          <div class="account-menu-header d-flex align-center gap-3">
+            <v-avatar color="primary" size="40" style="font-weight: var(--mp-typography-fontWeight-bold); color: white; flex-shrink: 0;">{{ userInitials }}</v-avatar>
+            <div style="min-width: 0;">
+              <div class="font-weight-semibold text-body-2 text-truncate">{{ accountName }}</div>
+              <div class="text-caption text-medium-emphasis">{{ userName }}</div>
+            </div>
+          </div>
+          <v-divider />
+          <v-list density="compact" class="pa-3">
+            <v-list-subheader class="text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.05em;">Switch Account</v-list-subheader>
+            <v-list-item rounded="lg" class="mb-1 account-list-item" active active-color="primary">
+              <template v-slot:prepend>
+                <v-avatar size="28" color="primary" variant="tonal" class="mr-3" style="font-size:11px; font-weight:700;">MP</v-avatar>
+              </template>
+              <div class="text-body-2 font-weight-medium" style="white-space:normal; line-height:1.3;">MMC-MSC-MCC Scooter Village</div>
+              <template v-slot:append>
+                <v-icon size="16" color="primary">mdi-check-circle</v-icon>
+              </template>
+            </v-list-item>
+            <v-list-item rounded="lg" class="account-list-item">
+              <template v-slot:prepend>
+                <v-avatar size="28" color="secondary" variant="tonal" class="mr-3" style="font-size:11px; font-weight:700;">MD</v-avatar>
+              </template>
+              <div class="text-body-2" style="white-space:normal; line-height:1.3;">Maropost Demo Store</div>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
+
+      <div class="mx-2" />
 
       <v-spacer />
 
@@ -62,36 +110,50 @@ function toggleTheme() {
         </template>
       </v-tooltip>
 
-      <v-divider vertical class="mx-1" style="height: 24px; align-self: center;" />
+      <div class="mx-2" />
 
       <!-- User menu -->
       <v-menu location="bottom end" offset="8">
         <template v-slot:activator="{ props }">
           <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 rounded-lg user-menu-trigger">
-            <v-avatar color="primary" size="30" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
+            <v-avatar color="primary" size="30" class="user-avatar-ring" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
             <span class="text-body-2 font-weight-medium d-none d-sm-block">{{ userName }}</span>
             <v-icon size="16" color="medium-emphasis">mdi-chevron-down</v-icon>
           </div>
         </template>
-        <v-card width="260" rounded="xl" elevation="8">
-          <v-list>
-            <v-list-item class="py-3">
-              <template v-slot:prepend>
-                <v-avatar color="primary" size="40" style="font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
-              </template>
-              <v-list-item-title class="font-weight-bold">{{ userName }}</v-list-item-title>
-              <v-list-item-subtitle style="font-size: var(--mp-typography-fontSize-sm);">deepak.v@maropost.com</v-list-item-subtitle>
-            </v-list-item>
+        <v-card min-width="280" rounded="xl" elevation="0" class="user-menu-card">
+          <!-- User header -->
+          <div class="user-menu-header d-flex align-center gap-3">
+            <v-avatar color="primary" size="44" style="font-weight: var(--mp-typography-fontWeight-bold); color: white; flex-shrink: 0;">{{ userInitials }}</v-avatar>
+            <div>
+              <div class="font-weight-bold text-body-2">{{ userName }}</div>
+              <div class="text-caption text-medium-emphasis">{{ userEmail }}</div>
+              <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">{{ userRole }}</v-chip>
+            </div>
+          </div>
+
+          <v-divider class="mx-4" />
+
+          <!-- Personal -->
+          <v-list density="compact" class="px-3 pt-3 pb-1">
+            <v-list-subheader class="text-uppercase font-weight-bold" style="font-size: var(--mp-typography-fontSize-xs); letter-spacing: 0.05em;">Personal</v-list-subheader>
+            <v-list-item prepend-icon="mdi-account-outline" title="My Profile" subtitle="View and edit your info" to="/settings" rounded="lg" class="mb-1" />
           </v-list>
-          <v-divider />
-          <v-list density="compact">
-            <v-list-item prepend-icon="mdi-account-outline" title="My Profile" to="/profile" rounded="lg" />
-            <v-list-item prepend-icon="mdi-cog-outline" title="Account Settings" to="/settings" rounded="lg" />
-            <v-list-item prepend-icon="mdi-credit-card-outline" title="Billing" to="/billing" rounded="lg" />
+
+          <v-divider class="mx-4" />
+
+          <!-- Account -->
+          <v-list density="compact" class="px-3 pt-3 pb-1">
+            <v-list-subheader class="text-uppercase font-weight-bold" style="font-size: var(--mp-typography-fontSize-xs); letter-spacing: 0.05em;">Account</v-list-subheader>
+            <v-list-item prepend-icon="mdi-cog-outline" title="Account Settings" subtitle="Company, users, permissions" to="/settings" rounded="lg" class="mb-1" />
+            <v-list-item prepend-icon="mdi-credit-card-outline" title="Billing" subtitle="Plan, usage, invoices" to="/settings" rounded="lg" class="mb-1" />
           </v-list>
-          <v-divider />
-          <v-list density="compact" class="py-1">
-            <v-list-item prepend-icon="mdi-logout" title="Sign Out" class="text-error" rounded="lg" />
+
+          <v-divider class="mx-4" />
+
+          <!-- Sign Out -->
+          <v-list density="compact" class="px-3 py-2">
+            <v-list-item prepend-icon="mdi-logout" title="Sign Out" rounded="lg" class="sign-out-item" color="error" />
           </v-list>
         </v-card>
       </v-menu>
@@ -99,12 +161,45 @@ function toggleTheme() {
   </v-app-bar>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .user-menu-trigger {
   transition: background $mp-transition-fast;
 }
 .user-menu-trigger:hover {
   background: rgb(var(--v-theme-surface-variant));
+}
+.user-avatar-ring {
+  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.15);
+  transition: box-shadow $mp-transition-fast;
+}
+.user-menu-trigger:hover .user-avatar-ring {
+  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.35);
+}
+.user-menu-card {
+  box-shadow: $mp-shadow-lg !important;
+}
+.user-menu-header {
+  background: rgba(var(--v-theme-primary), 0.03);
+  padding: $mp-space-5;
+}
+.sign-out-item {
+  transition: background $mp-transition-fast;
+}
+.sign-out-item:hover {
+  background: rgba(var(--v-theme-error), 0.06) !important;
+}
+.account-switcher-trigger {
+  transition: background $mp-transition-fast;
+}
+.account-switcher-trigger:hover {
+  background: rgb(var(--v-theme-surface-variant));
+}
+.account-switcher-card {
+  box-shadow: $mp-shadow-lg !important;
+}
+.account-menu-header {
+  padding: $mp-space-5;
+  background: rgba(var(--v-theme-surface-variant), 0.4);
 }
 .copilot-trigger {
   transition: all $mp-transition-base;

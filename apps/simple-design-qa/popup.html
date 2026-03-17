@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Design QA</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="card brandCard">
+        <div class="brandMeta">
+          <div class="brandMark">S</div>
+          <div>
+            <h1>Simple Design QA</h1>
+            <p>Log UX issues with context</p>
+          </div>
+        </div>
+        <button id="openSettingsBtn" type="button" class="btn btn-ghost btn-icon" aria-label="Open settings">
+          ⚙
+        </button>
+      </header>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Core Log</h2>
+          <p>Required fields for quick triage.</p>
+        </div>
+
+        <fieldset class="field severityFieldset">
+          <legend class="field-label">Severity</legend>
+          <div class="severityGrid">
+            <label class="severityOption">
+              <input type="radio" name="severity" value="Blocker" checked />
+              <span class="severityTitle">⛔ Blocker</span>
+              <span class="severityHelp">Stops task completion</span>
+            </label>
+
+            <label class="severityOption">
+              <input type="radio" name="severity" value="Major" />
+              <span class="severityTitle">⚠️ Major</span>
+              <span class="severityHelp">Breaks flow or wrong result</span>
+            </label>
+
+            <label class="severityOption">
+              <input type="radio" name="severity" value="Minor" />
+              <span class="severityTitle">🟦 Minor</span>
+              <span class="severityHelp">Cosmetic or polish</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div id="feedbackTypeField" class="field">
+          <label class="field-label" for="feedbackType">Type</label>
+          <select id="feedbackType" required>
+            <option value="">Select issue type...</option>
+            <option value="Table">Table</option>
+            <option value="Form">Form</option>
+            <option value="Dashboard Widget">Dashboard Widget</option>
+            <option value="Navigation">Navigation</option>
+            <option value="Content/Copy">Content/Copy</option>
+            <option value="Accessibility">Accessibility</option>
+            <option value="Other">Other</option>
+          </select>
+          <p id="feedbackTypeHelp" class="field-help">Pick a category to help triage.</p>
+          <p id="feedbackTypeError" class="field-error" hidden>Issue type is required.</p>
+        </div>
+
+        <div id="feedbackField" class="field">
+          <label class="field-label" for="feedback">Issue</label>
+          <textarea
+            id="feedback"
+            rows="5"
+            placeholder="• What happened?&#10;• What did you expect?&#10;• Steps (optional)"
+          ></textarea>
+          <div class="fieldMicro">
+            <button id="autoFormatBtn" type="button" class="btn btn-ghost btn-xs">Auto-format</button>
+            <span id="feedbackCount" class="muted">0 chars</span>
+          </div>
+          <p id="feedbackError" class="field-error" hidden>Issue details are required.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>Evidence</h2>
+          <p>Select the smallest area that shows the issue.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="containerName">Selected container (optional)</label>
+          <div class="inputActionRow">
+            <input id="containerName" type="text" readonly placeholder="No container selected" />
+            <button id="pickAreaBtn" type="button" class="btn btn-secondary">Select Container</button>
+          </div>
+        </div>
+
+        <div class="evidenceActions">
+          <button id="captureScreenshotBtn" type="button" class="btn btn-primary">Select Area</button>
+          <button id="captureFullPageBtn" type="button" class="btn btn-ghost">Capture Full Page</button>
+        </div>
+
+        <div class="evidenceState" id="evidenceState">
+          <p id="screenshotState" class="muted">No evidence captured yet.</p>
+          <a id="screenshotPreviewLink" href="#" hidden>Preview image</a>
+        </div>
+
+        <div id="screenshotThumbWrap" class="thumbWrap" hidden>
+          <img id="screenshotThumb" alt="Screenshot thumbnail" />
+        </div>
+
+        <div class="evidenceActions evidenceActionsCompact">
+          <button id="clearScreenshotBtn" type="button" class="btn btn-secondary">Clear</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <button
+          id="moreDetailsToggle"
+          type="button"
+          class="accordionTrigger"
+          aria-expanded="false"
+          aria-controls="moreDetailsContent"
+        >
+          <span>More details</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </button>
+
+        <div id="moreDetailsContent" class="accordionContent" hidden>
+          <div class="field">
+            <label class="field-label" for="pageTitle">Page Title</label>
+            <div class="inputActionRow">
+              <input id="pageTitle" type="text" readonly />
+              <button
+                type="button"
+                class="btn btn-ghost btn-copy"
+                data-copy-target="pageTitle"
+                aria-label="Copy page title"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="pageUrl">URL</label>
+            <div class="inputActionRow">
+              <input id="pageUrl" type="text" readonly />
+              <button
+                type="button"
+                class="btn btn-ghost btn-copy"
+                data-copy-target="pageUrl"
+                aria-label="Copy URL"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="fieldInlineHeader">
+              <label class="field-label" for="createdAtHuman">Captured at</label>
+              <button id="copyIsoBtn" type="button" class="btn btn-ghost btn-copy">Copy ISO</button>
+            </div>
+            <input id="createdAtHuman" type="text" readonly />
+            <input id="createdAt" class="srOnly" type="text" readonly tabindex="-1" />
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="referenceLink">Reference link (optional)</label>
+            <input id="referenceLink" type="text" placeholder="Paste Jira, Figma, or doc URL" />
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="notesInput">Notes (optional)</label>
+            <textarea id="notesInput" rows="2" placeholder="Extra context for QA or dev"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="actionRow primaryActions">
+          <button id="saveBtn" type="button" class="btn btn-primary">Save Log</button>
+          <button id="viewLogsBtn" type="button" class="btn btn-secondary">View Logs</button>
+        </div>
+
+        <div class="actionRow utilityActions">
+          <button id="downloadCsvBtn" type="button" class="btn btn-ghost">Export ZIP</button>
+        </div>
+
+        <div class="dangerZone">
+          <p>Danger zone</p>
+          <button id="clearAllBtn" type="button" class="btn btn-destructive">Clear All Logs</button>
+        </div>
+
+        <p id="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <div id="previewModal" class="modalBackdrop" hidden>
+      <div class="modalCard" role="dialog" aria-modal="true" aria-label="Screenshot Preview">
+        <div class="modalActions">
+          <button id="closePreviewBtn" type="button" class="btn btn-secondary">Close</button>
+        </div>
+        <p id="previewHint" class="modalHint" hidden></p>
+        <img id="previewImage" alt="Screenshot preview" />
+      </div>
+    </div>
+
+    <div id="clearConfirmModal" class="modalBackdrop" hidden>
+      <div
+        class="modalCard modalCardSmall"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="clearConfirmTitle"
+      >
+        <h3 id="clearConfirmTitle">Clear all logs?</h3>
+        <p class="muted">This permanently removes every saved entry in this extension.</p>
+        <label class="confirmCheck">
+          <input id="clearConfirmCheck" type="checkbox" />
+          <span>I understand this deletes everything.</span>
+        </label>
+        <div class="modalActions">
+          <button id="clearConfirmCancelBtn" type="button" class="btn btn-secondary">Cancel</button>
+          <button id="clearConfirmBtn" type="button" class="btn btn-destructive" disabled>Clear all</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" hidden role="status" aria-live="polite">
+      <p id="toastText">Saved.</p>
+      <button id="toastActionBtn" type="button" class="btn btn-ghost btn-copy" hidden>View</button>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

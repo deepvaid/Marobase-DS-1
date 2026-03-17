@@ -6,6 +6,10 @@ const meta = {
   title: 'Navigation/MpFilterTabs',
   component: MpFilterTabs,
   tags: ['autodocs'],
+  argTypes: {
+    modelValue: { control: 'text', description: 'Active tab key (v-model)' },
+    tabs: { control: 'object', description: 'Array of tab objects with label, key, and optional count' },
+  },
   parameters: {
     docs: {
       description: {

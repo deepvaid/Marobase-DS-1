@@ -1,0 +1,67 @@
+name: Supernova Storybook Sync
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supernova-storybook-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync-storybook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Validate required Supernova secrets
+        env:
+          SUPERNOVA_TOKEN: ${{ secrets.SUPERNOVA_TOKEN }}
+          SUPERNOVA_DESIGN_SYSTEM_ID: ${{ secrets.SUPERNOVA_DESIGN_SYSTEM_ID }}
+        run: |
+          if [ -z "$SUPERNOVA_TOKEN" ]; then
+            echo "Missing required secret: SUPERNOVA_TOKEN" >&2
+            exit 1
+          fi
+          if [ -z "$SUPERNOVA_DESIGN_SYSTEM_ID" ]; then
+            echo "Missing required secret: SUPERNOVA_DESIGN_SYSTEM_ID" >&2
+            exit 1
+          fi
+
+      - name: Build Storybook static site
+        run: pnpm storybook:build
+
+      - name: Install Supernova CLI
+        run: npm install --global @supernovaio/cli
+
+      - name: Sync Storybook to Supernova
+        env:
+          SUPERNOVA_TOKEN: ${{ secrets.SUPERNOVA_TOKEN }}
+          SUPERNOVA_DESIGN_SYSTEM_ID: ${{ secrets.SUPERNOVA_DESIGN_SYSTEM_ID }}
+          SUPERNOVA_STORYBOOK_SOURCE_ID: ${{ secrets.SUPERNOVA_STORYBOOK_SOURCE_ID }}
+          SUPERNOVA_STORYBOOK_NAME: ${{ secrets.SUPERNOVA_STORYBOOK_NAME }}
+          SUPERNOVA_VERSION_ID: ${{ secrets.SUPERNOVA_VERSION_ID }}
+          SUPERNOVA_BRAND_ID: ${{ secrets.SUPERNOVA_BRAND_ID }}
+        run: pnpm supernova:storybook:sync
