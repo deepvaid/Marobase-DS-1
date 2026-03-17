@@ -25,6 +25,10 @@ coverage
 # Vercel
 .vercel
 
+# Figma cache & pnpm store (large binary/JSON files)
+.cache/
+.pnpm-store/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
