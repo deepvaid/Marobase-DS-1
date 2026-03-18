@@ -239,12 +239,12 @@
     },
     "component-button-typography": {
       "fontSize": {
-        "value": "{typography.fontSize.body}",
+        "value": "{fontSize.body}",
         "type": "fontSizes",
         "description": "component.button.typography.fontSize"
       },
       "fontWeight": {
-        "value": "{typography.fontWeight.medium}",
+        "value": "{fontWeight.medium}",
         "type": "fontWeights",
         "description": "component.button.typography.fontWeight"
       },

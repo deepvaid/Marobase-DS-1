@@ -133,6 +133,19 @@ function generateTs(tokens) {
 }
 
 // ── Tokens Studio JSON (for Figma sync) ───────────────────────────────────
+
+// Remap alias references from tokens.json paths to Tokens Studio paths.
+// In tokens.json the hierarchy is e.g. typography.fontSize.body, but in the
+// Tokens Studio output fontSize sits directly under the "global" set.
+function remapAlias(value) {
+  if (typeof value !== 'string') return value
+  return value.replace(/\{([^}]+)\}/g, (_match, path) => {
+    const rewrite = path
+      .replace(/^typography\./, '')       // {typography.fontSize.X} → {fontSize.X}
+    return `{${rewrite}}`
+  })
+}
+
 function generateTokensStudio(raw) {
   const out = { global: {} }
 
@@ -226,7 +239,7 @@ function generateTokensStudio(raw) {
         : key === 'fontWeight' ? 'fontWeights'
         : 'typography'
       out.global['component-button-typography'][key] = {
-        value: val.$value,
+        value: remapAlias(val.$value),
         type,
         description: `component.button.typography.${key}`
       }
@@ -237,7 +250,7 @@ function generateTokensStudio(raw) {
     for (const [key, val] of Object.entries(raw.component.input.radius)) {
       if (key.startsWith('$')) continue
       out.global['component-input-radius'][key] = {
-        value: val.$value,
+        value: remapAlias(val.$value),
         type: 'borderRadius',
         description: `component.input.radius.${key}`
       }
