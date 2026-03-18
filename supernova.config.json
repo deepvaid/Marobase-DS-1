@@ -1,10 +1,11 @@
 {
+  "designSystemId": "725033",
   "storybook": {
-    "designSystemId": "723153",
-    "from": "/Users/deepakvaidya/Documents/marobase/apps/storybook/storybook-static",
-    "name": "marobase-ui-main",
-    "brandId": "5fa7dc5d-27fa-4640-b6b2-0fb50ce1caf2",
-    "sourceId": "534aea9d-a49c-4589-bc27-40911c7d2d64",
-    "publicAccess": false
+    "designSystemId": "725033",
+    "from": "./dist-storybook",
+    "name": "marobase-vue",
+    "brandId": "cb574bfb-c2c6-4e47-b2bc-94523c4b3456",
+    "sourceId": "f017ec41-db96-4805-aff0-961b57440067",
+    "publicAccess": true
   }
 }
