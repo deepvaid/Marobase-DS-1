@@ -38,13 +38,13 @@ export const DefaultInteractive: Story = {
       return { toggleExpand }
     },
     template: `
-      <div style="height: 800px; display: flex; background: #ECEFF1; padding: 24px;">
-        <div style="flex: 1; border-radius: 12px; background: white; margin-right: 24px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden;">
-          <h2 style="font-family: sans-serif; margin-bottom: 24px; color: #333;">Dashboard (App Main)</h2>
-          <div style="background: #F5F5F5; height: 120px; border-radius: 8px; margin-bottom: 16px;"></div>
-          <div style="background: #F5F5F5; height: 300px; border-radius: 8px;"></div>
+      <div style="height: 800px; display: flex; background: rgb(var(--v-theme-background)); padding: 24px;">
+        <div style="flex: 1; border-radius: 12px; background: rgb(var(--v-theme-surface)); margin-right: 24px; padding: 24px; box-shadow: var(--mp-shadow-sm); overflow: hidden;">
+          <h2 class="text-h6 font-weight-bold mb-6">Dashboard (App Main)</h2>
+          <div style="background: rgb(var(--v-theme-surface-variant)); height: 120px; border-radius: 8px; margin-bottom: 16px;"></div>
+          <div style="background: rgb(var(--v-theme-surface-variant)); height: 300px; border-radius: 8px;"></div>
         </div>
-        <div style="width: 440px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.1); flex-shrink: 0; transition: width 0.3s ease;" class="copilot-container">
+        <div style="width: 440px; border-radius: 12px; overflow: hidden; box-shadow: var(--mp-shadow-md); flex-shrink: 0; transition: width 0.3s ease;" class="copilot-container">
           <MpDaVinciBot @expand="toggleExpand" />
         </div>
       </div>
@@ -57,7 +57,7 @@ export const CompactView: Story = {
   render: () => ({
     components: { MpDaVinciBot },
     template: `
-      <div style="height: 700px; width: 440px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.1);">
+      <div style="height: 700px; width: 440px; border-radius: 12px; overflow: hidden; box-shadow: var(--mp-shadow-md);">
         <MpDaVinciBot />
       </div>
     `,

@@ -134,15 +134,15 @@ function newChat() {
 </script>
 
 <template>
-  <div class="da-vinci-bot d-flex flex-column" style="height: 100%; overflow: hidden;">
+  <div class="da-vinci-bot d-flex flex-column">
     <!-- ═══ HEADER ═══ -->
     <div class="da-vinci-header d-flex align-center ga-3 px-4 py-3">
       <div class="da-vinci-avatar">
         <v-icon color="white" size="22">mdi-creation</v-icon>
       </div>
       <div class="flex-grow-1">
-        <div class="text-subtitle-2 font-weight-bold" style="line-height: var(--mp-typography-lineHeight-tight);">Da Vinci Bot</div>
-        <div class="text-caption text-medium-emphasis" style="font-size: var(--mp-typography-fontSize-xs);">Intelligent AI assistant</div>
+        <div class="text-subtitle-2 font-weight-bold da-vinci-title">Da Vinci Bot</div>
+        <div class="text-caption text-medium-emphasis da-vinci-subtitle">Intelligent AI assistant</div>
       </div>
       <v-btn icon size="32" color="primary" variant="flat" @click="newChat">
         <v-icon size="18">mdi-plus</v-icon>
@@ -159,7 +159,7 @@ function newChat() {
     </div>
 
     <!-- ═══ BODY ═══ -->
-    <div ref="chatContainer" class="flex-grow-1" style="overflow-y: auto; background: rgb(var(--v-theme-surface));">
+    <div ref="chatContainer" class="flex-grow-1 da-vinci-chat-scroll">
       <!-- ─── EMPTY STATE ─── -->
       <div v-if="!chatMode" class="da-vinci-empty pa-5">
         <div class="mb-6 mt-2">
@@ -182,7 +182,7 @@ function newChat() {
           <div>
             <div class="d-flex align-center ga-2 mb-3">
               <v-icon size="16" color="primary">mdi-cart-outline</v-icon>
-              <span class="text-caption font-weight-bold text-uppercase" style="letter-spacing: 0.5px;">Commerce</span>
+              <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Commerce</span>
             </div>
             <div class="d-flex flex-column ga-2">
               <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Top 10 products by revenue')">
@@ -198,7 +198,7 @@ function newChat() {
           <div class="mt-5">
             <div class="d-flex align-center ga-2 mb-3">
               <v-icon size="16" color="primary">mdi-bullhorn-outline</v-icon>
-              <span class="text-caption font-weight-bold text-uppercase" style="letter-spacing: 0.5px;">Marketing</span>
+              <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Marketing</span>
             </div>
             <div class="d-flex flex-column ga-2">
               <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Create a flash sale campaign')">
@@ -214,7 +214,7 @@ function newChat() {
           <div class="mt-5">
             <div class="d-flex align-center ga-2 mb-3">
               <v-icon size="16" color="primary">mdi-robot-outline</v-icon>
-              <span class="text-caption font-weight-bold text-uppercase" style="letter-spacing: 0.5px;">Automation & Customers</span>
+              <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Automation & Customers</span>
             </div>
             <div class="d-flex flex-column ga-2">
               <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Set up abandoned cart recovery')">
@@ -234,7 +234,7 @@ function newChat() {
           <!-- User bubble -->
           <div v-if="msg.role === 'user'" class="d-flex justify-end mb-6">
             <div class="user-bubble px-4 py-2">
-              <span class="text-body-2 text-white" style="white-space: pre-wrap;">{{ msg.text }}</span>
+              <span class="text-body-2 text-on-primary user-bubble-text">{{ msg.text }}</span>
             </div>
           </div>
 
@@ -244,7 +244,7 @@ function newChat() {
               <v-avatar size="24" color="primary" class="mt-1">
                 <v-icon size="14" color="white">mdi-creation</v-icon>
               </v-avatar>
-              <div class="text-body-2 pt-1" style="line-height: 1.6;">{{ msg.text }}</div>
+              <div class="text-body-2 pt-1 da-vinci-assistant-text">{{ msg.text }}</div>
             </div>
 
             <!-- Rich Components -->
@@ -278,7 +278,7 @@ function newChat() {
 
     <!-- ═══ INPUT FOOTER ═══ -->
     <div class="da-vinci-input px-4 pt-3 pb-5">
-      <v-card variant="outlined" rounded="xl" class="pa-2" style="background: rgb(var(--v-theme-surface));" elevation="2">
+      <v-card variant="outlined" rounded="xl" class="pa-2 da-vinci-input-card" flat border>
         <v-textarea
           v-model="inputText"
           placeholder="Ask Da Vinci..."
@@ -288,8 +288,7 @@ function newChat() {
           rows="1"
           auto-grow
           max-rows="5"
-          class="mb-1 px-1"
-          style="font-size: var(--mp-typography-fontSize-body);"
+          class="mb-1 px-1 da-vinci-textarea"
           @keydown.enter.exact.prevent="sendQuery"
         />
         <div class="d-flex align-center justify-space-between mt-1">
@@ -318,9 +317,38 @@ function newChat() {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .da-vinci-bot {
   background: rgb(var(--v-theme-background));
+  height: 100%;
+  overflow: hidden;
+}
+
+.da-vinci-title {
+  line-height: var(--mp-typography-lineHeight-tight);
+}
+.da-vinci-subtitle {
+  font-size: var(--mp-typography-fontSize-xs);
+}
+.da-vinci-chat-scroll {
+  overflow-y: auto;
+  background: rgb(var(--v-theme-surface));
+}
+.mp-label-caps {
+  letter-spacing: 0.05em;
+}
+.user-bubble-text {
+  white-space: pre-wrap;
+  color: rgb(var(--v-theme-on-primary));
+}
+.da-vinci-assistant-text {
+  line-height: var(--mp-typography-lineHeight-loose);
+}
+.da-vinci-input-card {
+  background: rgb(var(--v-theme-surface));
+}
+.da-vinci-textarea {
+  font-size: var(--mp-typography-fontSize-body);
 }
 
 .da-vinci-header {
@@ -333,22 +361,25 @@ function newChat() {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  /* Brand-specific AI avatar gradient — orange is intentional */
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-warning)) 0%,
+    rgb(var(--v-theme-warning-darken-1)) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.35);
+  box-shadow: $mp-shadow-sm;
 }
 
 .suggestion-card {
   transition: all $mp-transition-base;
-  border-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+  border-color: rgba(var(--v-border-color), var(--v-border-opacity));
   background: rgb(var(--v-theme-surface));
   cursor: pointer;
 }
 .suggestion-card:hover {
-  border-color: rgb(var(--v-theme-primary)) !important;
+  border-color: rgb(var(--v-theme-primary));
   box-shadow: $mp-shadow-sm;
   background: rgb(var(--v-theme-surface-variant));
 }

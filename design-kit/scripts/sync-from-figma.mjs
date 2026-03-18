@@ -100,6 +100,39 @@ if (global.lineHeight) {
     if (setTokenValue(tokens, ['typography', 'lineHeight', key], val.value)) updatedCount++
   }
 }
+if (global.fontFamily) {
+  for (const [key, val] of Object.entries(global.fontFamily)) {
+    if (setTokenValue(tokens, ['typography', 'fontFamily', key], val.value)) updatedCount++
+  }
+}
+
+// Component — button radius
+if (global['component-button-radius']) {
+  for (const [key, val] of Object.entries(global['component-button-radius'])) {
+    if (setTokenValue(tokens, ['component', 'button', 'radius', key], val.value)) updatedCount++
+  }
+}
+
+// Component — button typography
+if (global['component-button-typography']) {
+  for (const [key, val] of Object.entries(global['component-button-typography'])) {
+    if (setTokenValue(tokens, ['component', 'button', 'typography', key], val.value)) updatedCount++
+  }
+}
+
+// Component — input radius
+if (global['component-input-radius']) {
+  for (const [key, val] of Object.entries(global['component-input-radius'])) {
+    if (setTokenValue(tokens, ['component', 'input', 'radius', key], val.value)) updatedCount++
+  }
+}
+
+// Component — card radius
+if (global['component-card-radius']) {
+  for (const [key, val] of Object.entries(global['component-card-radius'])) {
+    if (setTokenValue(tokens, ['component', 'card', 'radius', key], val.value)) updatedCount++
+  }
+}
 
 // Layout
 if (global.layout) {

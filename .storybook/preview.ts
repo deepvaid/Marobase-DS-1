@@ -28,6 +28,12 @@ import {
   mp_color_dark_secondary, mp_color_dark_secondaryDarken, mp_color_dark_success,
   mp_color_dark_warning, mp_color_dark_error, mp_color_dark_info,
   mp_color_dark_onPrimary, mp_color_dark_border,
+  mp_typography_fontFamily_base,
+  mp_component_button_typography_fontSize,
+  mp_component_button_typography_fontWeight,
+  mp_component_button_typography_letterSpacing,
+  mp_component_button_radius_default,
+  mp_component_input_radius_default,
 } from '../src/design-tokens/generated/tokens'
 
 // ── Shared Vuetify instance (driven by design tokens — mirrors src/plugins/vuetify.ts) ─
@@ -87,18 +93,28 @@ const vuetify = createVuetify({
   },
   defaults: {
     VBtn: {
-      style: 'letter-spacing: 0; font-weight: 500; text-transform: none; font-family: Inter, sans-serif;',
-      rounded: 'lg',
+      style: `
+        letter-spacing: ${mp_component_button_typography_letterSpacing};
+        font-weight: ${mp_component_button_typography_fontWeight};
+        text-transform: none;
+        font-family: ${mp_typography_fontFamily_base};
+        font-size: ${mp_component_button_typography_fontSize};
+        border-radius: ${mp_component_button_radius_default};
+      `,
     },
-    VCard: { rounded: 'xl', variant: 'flat', border: true },
-    VTextField: { rounded: 'lg', variant: 'outlined', hideDetails: 'auto' },
-    VSelect: { rounded: 'lg', variant: 'outlined', hideDetails: 'auto' },
+    VCard: { variant: 'flat', border: true, class: 'mp-card' },
+    VTextField: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
+    VSelect: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
+    VAutocomplete: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
+    VCombobox: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
+    VTextarea: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
     VChip: { rounded: 'md' },
     VDataTable: { fixedHeader: true, hover: true, density: 'comfortable', itemsPerPage: 15 },
     VNavigationDrawer: { elevation: 0 },
     VAppBar: { elevation: 0 },
     VDialog: { rounded: 'xl' },
-    VDivider: { opacity: 1 },
+    VDivider: { opacity: 0.6 },
+    VList: { elevation: 0, border: true, rounded: 'lg' },
   },
 })
 
@@ -141,10 +157,7 @@ const preview: Preview = {
       template: `
         <v-app>
           <v-theme-provider :theme="sbTheme">
-            <div
-              class="pa-6"
-              style="background: rgb(var(--v-theme-background)); min-height: 100vh; width: 100%;"
-            >
+            <div class="pa-6 mp-story-canvas">
               <story />
             </div>
           </v-theme-provider>

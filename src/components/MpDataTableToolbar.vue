@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const search = defineModel<string>('search', { default: '' })
 const filterMenu = defineModel<boolean>('filterOpen', { default: false })
+const hiddenColumns = defineModel<string[]>('hiddenColumns', { default: () => [] })
 
-defineProps<{
+const props = defineProps<{
   searchPlaceholder?: string
   title?: string
   activeFilters?: Array<{ key: string; label: string }>
   selectedCount?: number
   totalCount?: number
+  headers?: Array<{ title: string; key: string; [k: string]: any }>
 }>()
 
 defineEmits<{
@@ -16,6 +20,29 @@ defineEmits<{
   clearSelection: []
   selectAll: []
 }>()
+
+// Column visibility
+const NON_TOGGLEABLE = new Set(['actions', 'data-table-select', 'data-table-expand'])
+
+const toggleableHeaders = computed(() =>
+  (props.headers ?? []).filter(h => h.title && !NON_TOGGLEABLE.has(h.key))
+)
+
+function isColumnVisible(key: string) {
+  return !hiddenColumns.value.includes(key)
+}
+
+function toggleColumn(key: string) {
+  if (hiddenColumns.value.includes(key)) {
+    hiddenColumns.value = hiddenColumns.value.filter(k => k !== key)
+  } else {
+    hiddenColumns.value = [...hiddenColumns.value, key]
+  }
+}
+
+function resetColumns() {
+  hiddenColumns.value = []
+}
 
 function visibleChips(filters: Array<{ key: string; label: string }>) {
   return filters.slice(0, 3)
@@ -27,7 +54,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 
 <template>
   <!-- Toolbar row: title + filter button + extra actions + search -->
-  <div class="d-flex align-center ga-3 px-4 pt-4 pb-3" style="min-height: var(--mp-layout-appbarHeight);">
+  <div class="d-flex align-center ga-3 px-4 pt-4 pb-3 mp-toolbar-row">
     <div v-if="title" class="text-subtitle-1 font-weight-bold">{{ title }}</div>
     <slot name="title" />
     <v-spacer />
@@ -43,10 +70,9 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
         <v-btn
           v-bind="menuProps"
           variant="outlined"
-          class="text-none text-medium-emphasis"
+          class="text-none text-medium-emphasis mp-filter-btn"
           prepend-icon="mdi-filter-variant"
           rounded="lg"
-          style="height: 40px;"
         >
           Filter
           <v-badge
@@ -58,12 +84,64 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
           />
         </v-btn>
       </template>
-      <v-card min-width="280" max-width="320" elevation="8" rounded="xl" class="mt-1">
+      <v-card min-width="280" max-width="320" flat border rounded="xl" class="mt-1">
         <slot name="filter-content" />
-        <v-divider style="opacity: 0.4" />
+        <v-divider class="mp-divider-muted" />
         <div class="d-flex justify-end ga-2 pa-3">
           <v-btn variant="text" size="small" class="text-none" @click="$emit('clearFilters')">Clear all</v-btn>
           <v-btn color="primary" variant="flat" size="small" class="text-none" @click="filterMenu = false">Done</v-btn>
+        </div>
+      </v-card>
+    </v-menu>
+
+    <!-- Column visibility toggle -->
+    <v-menu
+      v-if="headers?.length"
+      :close-on-content-click="false"
+      location="bottom end"
+    >
+      <template v-slot:activator="{ props: menuProps }">
+        <v-btn
+          v-bind="menuProps"
+          variant="outlined"
+          icon="mdi-view-column-outline"
+          rounded="lg"
+          class="text-medium-emphasis mp-filter-btn"
+        >
+          <v-icon>mdi-view-column-outline</v-icon>
+          <v-badge
+            v-if="hiddenColumns.length"
+            :content="hiddenColumns.length"
+            color="primary"
+            floating
+          />
+        </v-btn>
+      </template>
+      <v-card min-width="220" max-width="280" flat border rounded="xl" class="mt-1">
+        <div class="pa-3">
+          <div class="text-subtitle-2 font-weight-bold mb-2">Toggle columns</div>
+          <v-checkbox
+            v-for="h in toggleableHeaders"
+            :key="h.key"
+            :label="h.title"
+            :model-value="isColumnVisible(h.key)"
+            density="compact"
+            hide-details
+            class="mp-column-checkbox"
+            @update:model-value="toggleColumn(h.key)"
+          />
+        </div>
+        <v-divider class="mp-divider-muted" />
+        <div class="d-flex justify-end pa-3">
+          <v-btn
+            variant="text"
+            size="small"
+            class="text-none"
+            :disabled="!hiddenColumns.length"
+            @click="resetColumns"
+          >
+            Reset
+          </v-btn>
         </div>
       </v-card>
     </v-menu>
@@ -72,7 +150,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
     <slot name="actions" />
 
     <!-- Search field -->
-    <div style="width: 220px;">
+    <div class="mp-toolbar-search">
       <v-text-field
         v-model="search"
         prepend-inner-icon="mdi-magnify"
@@ -140,7 +218,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
         >
           Select All
         </v-btn>
-        <v-divider v-if="$slots['bulk-actions']" vertical class="mx-1" style="height: 24px;" />
+        <v-divider v-if="$slots['bulk-actions']" vertical class="mx-1 mp-divider-vertical" />
         <slot name="bulk-actions" />
         <v-spacer />
         <v-btn
@@ -155,5 +233,33 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   </v-expand-transition>
 
   <!-- Separator between toolbar and data table header row -->
-  <v-divider style="opacity: 0.12;" />
+  <v-divider class="mp-divider-toolbar" />
 </template>
+
+<style scoped lang="scss">
+@import '@/design-tokens/generated/_variables.scss';
+
+.mp-toolbar-row {
+  min-height: $mp-layout-appbarHeight;
+}
+.mp-filter-btn {
+  height: $mp-spacing-10;
+}
+.mp-toolbar-search {
+  width: 220px;
+}
+.mp-divider-vertical {
+  height: $mp-spacing-6;
+}
+.mp-divider-muted {
+  opacity: 0.4;
+}
+.mp-divider-toolbar {
+  opacity: 0.12;
+}
+.mp-column-checkbox {
+  :deep(.v-label) {
+    font-size: 13px;
+  }
+}
+</style>

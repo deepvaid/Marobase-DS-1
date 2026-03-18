@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import MpPageHeader from '@/components/MpPageHeader.vue'
+import MpFormDrawer from '@/components/MpFormDrawer.vue'
 
 const activeTab = ref('account')
 const saveSnack = ref(false)
@@ -598,30 +599,29 @@ function save() { saveSnack.value = true }
     </div><!-- /right column: scroll container -->
     </div><!-- /two-column layout -->
 
-    <!-- Invite User Dialog -->
-    <v-dialog v-model="addUserDialog" max-width="460" rounded="xl">
-      <v-card rounded="xl">
-        <div class="pa-5 pb-3 d-flex align-center justify-space-between">
-          <div class="text-h6 font-weight-bold">Invite Team Member</div>
-          <v-btn icon="mdi-close" variant="text" size="small" @click="addUserDialog=false"></v-btn>
-        </div>
-        <div class="pa-5">
-          <v-text-field v-model="newUserEmail" label="Email Address" type="email" variant="outlined" density="comfortable" class="mb-3" placeholder="colleague@company.com"></v-text-field>
-          <v-select v-model="newUserRole" label="Role" :items="['Admin','Marketer','Support Agent','Analyst','Viewer']" variant="outlined" density="comfortable" class="mb-3"></v-select>
-          <div class="text-subtitle-2 font-weight-bold mb-2">Module Access</div>
-          <div class="d-flex gap-4 mb-3">
-            <v-checkbox label="Marketing" color="primary" density="compact" hide-details></v-checkbox>
-            <v-checkbox label="Service" color="primary" density="compact" hide-details></v-checkbox>
-            <v-checkbox label="Commerce" color="primary" density="compact" hide-details></v-checkbox>
-          </div>
-          <v-alert type="info" variant="tonal" density="compact" rounded="lg" class="text-body-2">The invitee will receive a sign-up link. Access is granted after they accept.</v-alert>
-        </div>
-        <div class="pa-5 pt-3 d-flex justify-end gap-3">
+    <!-- Invite User Drawer -->
+    <MpFormDrawer
+      v-model="addUserDialog"
+      title="Invite Team Member"
+      subtitle="Grant role-based module access"
+      :width="460"
+    >
+      <v-text-field v-model="newUserEmail" label="Email Address" type="email" variant="outlined" density="comfortable" class="mb-3" placeholder="colleague@company.com"></v-text-field>
+      <v-select v-model="newUserRole" label="Role" :items="['Admin','Marketer','Support Agent','Analyst','Viewer']" variant="outlined" density="comfortable" class="mb-3"></v-select>
+      <div class="text-subtitle-2 font-weight-bold mb-2">Module Access</div>
+      <div class="d-flex gap-4 mb-3">
+        <v-checkbox label="Marketing" color="primary" density="compact" hide-details></v-checkbox>
+        <v-checkbox label="Service" color="primary" density="compact" hide-details></v-checkbox>
+        <v-checkbox label="Commerce" color="primary" density="compact" hide-details></v-checkbox>
+      </div>
+      <v-alert type="info" variant="tonal" density="compact" rounded="lg" class="text-body-2">The invitee will receive a sign-up link. Access is granted after they accept.</v-alert>
+      <template #footer>
+        <div class="w-100 d-flex justify-end gap-3">
           <v-btn variant="text" class="text-none" @click="addUserDialog=false">Cancel</v-btn>
           <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-email-send" :disabled="!newUserEmail">Send Invitation</v-btn>
         </div>
-      </v-card>
-    </v-dialog>
+      </template>
+    </MpFormDrawer>
 
     <!-- Save snackbar -->
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">

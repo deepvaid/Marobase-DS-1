@@ -16,7 +16,9 @@ withDefaults(defineProps<{
     location="right"
     temporary
     :width="width"
-    elevation="16"
+    elevation="0"
+    border
+    class="mp-form-drawer"
   >
     <div class="d-flex flex-column h-100">
       <div class="pa-5 border-b d-flex align-center justify-space-between">

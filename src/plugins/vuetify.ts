@@ -19,6 +19,12 @@ import {
   mp_color_dark_secondary, mp_color_dark_secondaryDarken, mp_color_dark_success,
   mp_color_dark_warning, mp_color_dark_error, mp_color_dark_info,
   mp_color_dark_onPrimary, mp_color_dark_border,
+  mp_typography_fontFamily_base,
+  mp_component_button_typography_fontSize,
+  mp_component_button_typography_fontWeight,
+  mp_component_button_typography_letterSpacing,
+  mp_component_button_radius_default,
+  mp_component_input_radius_default,
 } from '@/design-tokens/generated/tokens'
 
 // ─── Light Theme ──────────────────────────────────────────────────────────────
@@ -90,42 +96,48 @@ export default createVuetify({
   defaults: {
     // Buttons — Inter font, no all-caps
     VBtn: {
-      style: 'letter-spacing: 0; font-weight: 500; text-transform: none; font-family: Inter, sans-serif;',
-      rounded: 'lg',
+      style: `
+        letter-spacing: ${mp_component_button_typography_letterSpacing};
+        font-weight: ${mp_component_button_typography_fontWeight};
+        text-transform: none;
+        font-family: ${mp_typography_fontFamily_base};
+        font-size: ${mp_component_button_typography_fontSize};
+        border-radius: ${mp_component_button_radius_default};
+      `,
     },
 
     // Cards — flat (no elevation), bordered, rounded corners
     VCard: {
-      rounded: 'xl',
       variant: 'flat',
       border: true,
+      class: 'mp-card',
     },
 
     // Form inputs
     VTextField: {
-      rounded: 'lg',
       variant: 'outlined',
       hideDetails: 'auto',
+      style: `border-radius: ${mp_component_input_radius_default};`,
     },
     VSelect: {
-      rounded: 'lg',
       variant: 'outlined',
       hideDetails: 'auto',
+      style: `border-radius: ${mp_component_input_radius_default};`,
     },
     VAutocomplete: {
-      rounded: 'lg',
       variant: 'outlined',
       hideDetails: 'auto',
+      style: `border-radius: ${mp_component_input_radius_default};`,
     },
     VCombobox: {
-      rounded: 'lg',
       variant: 'outlined',
       hideDetails: 'auto',
+      style: `border-radius: ${mp_component_input_radius_default};`,
     },
     VTextarea: {
-      rounded: 'lg',
       variant: 'outlined',
       hideDetails: 'auto',
+      style: `border-radius: ${mp_component_input_radius_default};`,
     },
 
     // Chips — medium radius, consistent sizing
@@ -159,6 +171,13 @@ export default createVuetify({
     // Divider — subtle by default
     VDivider: {
       opacity: 0.6,
+    },
+
+    // Lists — flat + border (no heavy elevation)
+    VList: {
+      elevation: 0,
+      border: true,
+      rounded: 'lg',
     },
   },
 })

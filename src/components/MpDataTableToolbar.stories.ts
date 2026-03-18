@@ -26,6 +26,7 @@ The \`MpDataTableToolbar\` is the primary control surface above Data Tables. It 
 ### 💡 Best Practices
 - **Bulk Actions:** Only show bulk actions (in the \`#bulk-actions\` slot) when rows are actually selected. Make dangerous actions (like Delete) use \`color="error"\`.
 - **Select All:** When feeding the \`selected-count\` and \`total-count\` props, ensure your \`@select-all\` handler accurately grabs all valid IDs to sync with the underlying \`v-data-table\`.
+- **Column Toggle:** Pass all column headers (including the non-toggleable \`actions\` key) via \`:headers\`. The toolbar automatically excludes non-toggleable keys. Bind \`v-model:hidden-columns\` and filter your headers computed before passing to \`v-data-table\`. The columns button is an icon button that shows a badge count of hidden columns.
         `,
       },
     },
@@ -295,7 +296,53 @@ export const WithBulkActions: Story = {
   },
 }
 
-// ── 6. Full: Filters + Bulk Actions + Extra Actions ───────────────────────────
+// ── 6. With Column Toggle ────────────────────────────────────────────────────
+export const WithColumnToggle: Story = {
+  render: (args) => ({
+    components: { MpDataTableToolbar },
+    setup() {
+      const search = ref('')
+      const hiddenColumns = ref<string[]>([])
+
+      const sampleHeaders = [
+        { title: 'Contact', key: 'contact', sortable: true },
+        { title: 'Company', key: 'company' },
+        { title: 'Tags', key: 'tags', sortable: false },
+        { title: 'Status', key: 'status' },
+        { title: 'Score', key: 'score', align: 'end' as const },
+        { title: 'Last Active', key: 'lastActive', align: 'end' as const },
+        { title: '', key: 'actions', align: 'end' as const, sortable: false, width: '48px' },
+      ]
+
+      const visibleHeaders = computed(() =>
+        sampleHeaders.filter(h => !hiddenColumns.value.includes(h.key))
+      )
+
+      return { args, search, hiddenColumns, sampleHeaders, visibleHeaders }
+    },
+    template: `
+      <v-card variant="flat" border rounded="xl" class="overflow-hidden">
+        <MpDataTableToolbar
+          v-bind="args"
+          v-model:search="search"
+          v-model:hidden-columns="hiddenColumns"
+          :headers="sampleHeaders"
+        />
+        <div class="pa-4 text-body-2 text-medium-emphasis">
+          <strong>Visible columns:</strong> {{ visibleHeaders.map(h => h.title || h.key).join(', ') }}
+          <br />
+          <strong>Hidden:</strong> {{ hiddenColumns.length ? hiddenColumns.join(', ') : 'none' }}
+        </div>
+      </v-card>
+    `,
+  }),
+  args: {
+    title: 'All Contacts',
+    searchPlaceholder: 'Search contacts…',
+  },
+}
+
+// ── 7. Full: Filters + Bulk Actions + Extra Actions ───────────────────────────
 export const FullFeatured: Story = {
   render: (args) => ({
     components: { MpDataTableToolbar },

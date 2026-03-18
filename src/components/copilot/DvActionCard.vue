@@ -1,11 +1,17 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue'
+
+const props = defineProps<{
   icon?: string
   title: string
   description: string
   confirmLabel?: string
   color?: string
 }>()
+
+const accentBorder = computed(() =>
+  props.color ? { borderLeft: `3px solid ${props.color}` } : undefined
+)
 
 const emit = defineEmits<{
   confirm: []
@@ -14,7 +20,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-card variant="outlined" rounded="lg" :style="{ borderLeft: `3px solid ${color || '#1976D2'}` }">
+  <v-card variant="outlined" rounded="lg" class="dv-action-card" :style="accentBorder">
     <v-card-text class="pa-4">
       <div class="d-flex align-start ga-3">
         <v-avatar :color="color || 'primary'" variant="tonal" size="36">
@@ -34,3 +40,9 @@ const emit = defineEmits<{
     </v-card-text>
   </v-card>
 </template>
+
+<style scoped>
+.dv-action-card {
+  border-left: 3px solid rgb(var(--v-theme-primary));
+}
+</style>

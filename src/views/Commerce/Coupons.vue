@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useCommerceStore } from '@/stores/useCommerce'
 import MpPageHeader from '@/components/MpPageHeader.vue'
 import MpDataTableToolbar from '@/components/MpDataTableToolbar.vue'
+import MpFormDrawer from '@/components/MpFormDrawer.vue'
 
 const store = useCommerceStore()
 const search = ref('')
@@ -186,28 +187,23 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
       </v-data-table>
     </v-card>
 
-    <!-- ── Create Coupon Wizard Dialog ──────────────────────────── -->
-    <v-dialog v-model="createDialog" max-width="700" rounded="xl" persistent>
-      <v-card rounded="xl">
-        <!-- Wizard Header -->
-        <div class="pa-5 border-b d-flex align-center justify-space-between">
-          <div>
-            <div class="text-h6 font-weight-bold">Create Coupon Code</div>
-            <div class="text-caption text-medium-emphasis">Step {{ step }} of 3</div>
-          </div>
-          <v-btn icon="mdi-close" variant="text" size="small" @click="createDialog=false"></v-btn>
-        </div>
+    <!-- ── Create Coupon Wizard Drawer ──────────────────────────── -->
+    <MpFormDrawer
+      v-model="createDialog"
+      title="Create Coupon Code"
+      :subtitle="`Step ${step} of 3`"
+      :width="700"
+    >
+      <!-- Progress -->
+      <v-progress-linear :model-value="(step/3)*100" color="primary" height="3" rounded class="mb-4"></v-progress-linear>
 
-        <!-- Progress -->
-        <v-progress-linear :model-value="(step/3)*100" color="primary" height="3" rounded></v-progress-linear>
-
-        <!-- Step 1: Code & Discount -->
-        <div v-if="step===1" class="pa-6">
+      <!-- Step 1: Code & Discount -->
+      <div v-if="step===1" class="pa-1">
           <div class="text-subtitle-2 font-weight-bold mb-4 text-uppercase text-medium-emphasis">Coupon Code</div>
           <div class="d-flex gap-3 mb-5">
             <v-text-field v-model="coupon.code" label="Coupon Code" variant="outlined" density="comfortable"
               placeholder="e.g. SUMMER20" class="flex-grow-1" hint="Leave blank to auto-generate" persistent-hint></v-text-field>
-            <v-btn variant="outlined" color="primary" class="text-none mt-1" prepend-icon="mdi-refresh" @click="generateCode" style="height:56px;">Auto-Generate</v-btn>
+            <v-btn variant="outlined" color="primary" class="text-none mt-1 coupon-code-btn" prepend-icon="mdi-refresh" @click="generateCode">Auto-Generate</v-btn>
           </div>
           <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Discount Type</div>
           <v-row dense class="mb-4">
@@ -225,7 +221,7 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
         </div>
 
         <!-- Step 2: Rules & Restrictions -->
-        <div v-else-if="step===2" class="pa-6">
+      <div v-else-if="step===2" class="pa-1">
           <div class="text-subtitle-2 font-weight-bold mb-4 text-uppercase text-medium-emphasis">Usage Rules</div>
           <v-row dense class="mb-4">
             <v-col cols="6">
@@ -266,7 +262,7 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
         </div>
 
         <!-- Step 3: Preview & Confirm -->
-        <div v-else class="pa-6">
+      <div v-else class="pa-1">
           <div class="text-subtitle-2 font-weight-bold mb-4 text-uppercase text-medium-emphasis">Review & Confirm</div>
 
           <!-- Preview card -->
@@ -288,14 +284,14 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
           <v-textarea v-model="coupon.description" label="Internal note (optional)" variant="outlined" density="comfortable" rows="2" placeholder="Add a note for your team about what this coupon is for…"></v-textarea>
         </div>
 
-        <!-- Footer -->
-        <div class="pa-5 border-t d-flex justify-space-between align-center">
+      <template #footer>
+        <div class="w-100 d-flex justify-space-between align-center">
           <v-btn variant="text" class="text-none" @click="step>1?step--:createDialog=false">{{ step===1?'Cancel':'← Back' }}</v-btn>
           <v-btn v-if="step<3" color="primary" variant="elevated" class="text-none" :disabled="step===1&&!coupon.type" @click="step++">Continue →</v-btn>
           <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="mdi-check" @click="saveCoupon">Create Coupon</v-btn>
         </div>
-      </v-card>
-    </v-dialog>
+      </template>
+    </MpFormDrawer>
 
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
       <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Coupon created successfully</div>
@@ -311,12 +307,11 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
 .mp-btn-dark:hover {
   opacity: 0.88;
 }
-.border-b { border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
-.border-t { border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
 .ActionButtons { opacity: 0; transition: opacity 0.2s; }
 tr:hover .ActionButtons { opacity: 1; }
 .font-mono { font-family: monospace; }
 .type-card { transition: all 0.15s; cursor:pointer; }
-.type-card:hover { border-color: rgb(var(--v-theme-primary)) !important; }
-.type-card.selected { border-color: rgb(var(--v-theme-primary)) !important; }
+.type-card:hover { border-color: rgb(var(--v-theme-primary)); }
+.type-card.selected { border-color: rgb(var(--v-theme-primary)); }
+.coupon-code-btn { height: 56px; }
 </style>

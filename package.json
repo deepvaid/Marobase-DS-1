@@ -17,7 +17,8 @@
     "design-kit:export-figma": "node design-kit/scripts/export-figma.mjs",
     "design-kit:push-connect": "npx @figma/code-connect publish --token $FIGMA_TOKEN",
     "design-kit:push-variables": "node design-kit/scripts/push-variables.mjs",
-    "tokens:sync-figma": "node design-kit/scripts/sync-from-figma.mjs && npm run tokens:build"
+    "tokens:sync-figma": "node design-kit/scripts/sync-from-figma.mjs && npm run tokens:build",
+    "tokens:push-figma": "node src/design-tokens/build.mjs --push-figma"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",

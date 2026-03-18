@@ -84,6 +84,12 @@ const headers = [
   { title: '', key: 'actions', align: 'end' as const, sortable: false, width: '48px' },
 ]
 
+// Column visibility
+const hiddenColumns = ref<string[]>([])
+const visibleHeaders = computed(() =>
+  headers.filter(h => !hiddenColumns.value.includes(h.key))
+)
+
 const scoreColor = (s: number) => s >= 80 ? 'success' : s >= 50 ? 'warning' : 'error'
 const saveSnack = ref(false)
 
@@ -117,7 +123,9 @@ function selectAll() {
       <!-- Toolbar: title, search, filter, filter chips, bulk bar -->
       <MpDataTableToolbar
         v-model:search="search"
+        v-model:hidden-columns="hiddenColumns"
         title="All Contacts"
+        :headers="headers"
         :active-filters="activeFilterEntries"
         :selected-count="selected.length"
         :total-count="store.contacts.length"
@@ -163,7 +171,7 @@ function selectAll() {
       <!-- Data Table -->
       <v-data-table
         v-model="selected"
-        :headers="headers"
+        :headers="visibleHeaders"
         :items="store.contacts"
         :search="search"
         show-select

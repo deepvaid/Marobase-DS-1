@@ -19,13 +19,28 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const TOKENS_PATH = resolve(__dirname, 'tokens.json')
 const OUT_DIR = resolve(__dirname, 'generated')
 
+// ── Convert shadow object to CSS shorthand ─────────────────────────────────
+function shadowToCSS(val) {
+  if (typeof val === 'string') return val
+  if (val && typeof val === 'object' && 'x' in val && 'y' in val) {
+    const x = typeof val.x === 'number' ? `${val.x}px` : (val.x === '0' ? '0' : `${val.x}px`)
+    const y = typeof val.y === 'number' ? `${val.y}px` : (val.y === '0' ? '0' : `${val.y}px`)
+    const blur = typeof val.blur === 'number' ? `${val.blur}px` : `${val.blur}px`
+    const spread = typeof val.spread === 'number' ? `${val.spread}px` : (val.spread === '0' ? '0' : `${val.spread}px`)
+    return `${x} ${y} ${blur} ${spread} ${val.color}`
+  }
+  return String(val)
+}
+
 // ── Flatten nested token object into path→value pairs ──────────────────────
 function flatten(obj, prefix = []) {
   const result = []
   for (const [key, val] of Object.entries(obj)) {
     if (key.startsWith('$')) continue // skip meta keys
     if (val && typeof val === 'object' && '$value' in val) {
-      result.push({ path: [...prefix, key], value: val.$value, type: val.$type || 'unknown' })
+      // Convert shadow objects to CSS shorthand for generated output
+      const outputValue = val.$type === 'shadow' ? shadowToCSS(val.$value) : val.$value
+      result.push({ path: [...prefix, key], value: outputValue, rawValue: val.$value, type: val.$type || 'unknown' })
     } else if (val && typeof val === 'object') {
       result.push(...flatten(val, [...prefix, key]))
     }
@@ -256,7 +271,7 @@ function generateTokensStudio(raw) {
 }
 
 // ── Build ──────────────────────────────────────────────────────────────────
-function build() {
+function build({ pushToFigma = false } = {}) {
   const raw = JSON.parse(readFileSync(TOKENS_PATH, 'utf-8'))
   const tokens = flatten(raw)
 
@@ -265,18 +280,23 @@ function build() {
   writeFileSync(resolve(OUT_DIR, 'variables.css'), generateCss(tokens))
   writeFileSync(resolve(OUT_DIR, 'tokens.ts'), generateTs(tokens))
 
-  // Also regenerate Tokens Studio JSON to keep Figma in sync
-  const FIGMA_EXPORT_DIR = resolve(__dirname, '../../design-kit/figma-export')
-  mkdirSync(FIGMA_EXPORT_DIR, { recursive: true })
-  const tokensStudio = generateTokensStudio(raw)
-  writeFileSync(resolve(FIGMA_EXPORT_DIR, 'tokens-studio.json'), JSON.stringify(tokensStudio, null, 2))
-
   console.log(`✓ Generated ${tokens.length} tokens → ${OUT_DIR}/`)
-  console.log(`✓ Synced tokens-studio.json → ${FIGMA_EXPORT_DIR}/`)
+
+  // Only write tokens-studio.json when explicitly pushing to Figma.
+  // During a sync-from-figma run we must NOT overwrite this file — it is the
+  // source written by Tokens Studio and overwriting it would erase Figma's changes.
+  if (pushToFigma) {
+    const FIGMA_EXPORT_DIR = resolve(__dirname, '../../design-kit/figma-export')
+    mkdirSync(FIGMA_EXPORT_DIR, { recursive: true })
+    const tokensStudio = generateTokensStudio(raw)
+    writeFileSync(resolve(FIGMA_EXPORT_DIR, 'tokens-studio.json'), JSON.stringify(tokensStudio, null, 2))
+    console.log(`✓ Synced tokens-studio.json → ${FIGMA_EXPORT_DIR}/`)
+  }
 }
 
 // ── Entry ──────────────────────────────────────────────────────────────────
-build()
+const pushToFigma = process.argv.includes('--push-figma')
+build({ pushToFigma })
 
 if (process.argv.includes('--watch')) {
   console.log('Watching tokens.json for changes…')
@@ -285,7 +305,7 @@ if (process.argv.includes('--watch')) {
     clearTimeout(debounce)
     debounce = setTimeout(() => {
       console.log('tokens.json changed — rebuilding…')
-      try { build() } catch (e) { console.error(e) }
+      try { build({ pushToFigma }) } catch (e) { console.error(e) }
     }, 200)
   })
 }

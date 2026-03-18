@@ -11,7 +11,7 @@ html, body, #app {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--mp-typography-fontFamily-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -39,6 +39,24 @@ a {
   font-family: var(--mp-typography-fontFamily-base);
 }
 
+/* Token-driven card radius that responds to rendered card size */
+.v-card.mp-card {
+  container-type: inline-size;
+  border-radius: var(--mp-component-card-radius-md) !important;
+}
+
+@container (max-width: 359px) {
+  .v-card.mp-card {
+    border-radius: var(--mp-component-card-radius-sm) !important;
+  }
+}
+
+@container (min-width: 720px) {
+  .v-card.mp-card {
+    border-radius: var(--mp-component-card-radius-lg) !important;
+  }
+}
+
 /* ─── Border Utilities (token-driven via mp-theme-aliases.css) ─ */
 .border-b {
   border-bottom: 1px solid var(--mp-border-subtle);
@@ -48,6 +66,27 @@ a {
 }
 .border-r {
   border-right: 1px solid var(--mp-border-subtle);
+}
+.border-l {
+  border-left: 1px solid var(--mp-border-subtle);
+}
+
+/* Primary border accent (token-driven) */
+.border-primary {
+  border-color: rgb(var(--v-theme-primary));
+}
+
+/* Alternating / inverse row striping */
+.mp-row-alt {
+  background: rgb(var(--v-theme-on-surface));
+  color: rgb(var(--v-theme-surface));
+}
+
+/* Storybook / app canvas background (theme-aware) */
+.mp-story-canvas {
+  background: rgb(var(--v-theme-background));
+  min-height: 100vh;
+  width: 100%;
 }
 
 /* ─── Gap Utilities ─────────────────────────────────────────── */

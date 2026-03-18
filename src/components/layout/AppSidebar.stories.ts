@@ -52,7 +52,7 @@ export const Expanded: Story = {
       return { open, rail }
     },
     template: `
-      <v-layout style="height: 600px;">
+      <v-layout style="height: 600px;" class="bg-surface">
         <AppSidebar v-model="open" v-model:rail="rail" />
         <v-main class="pa-6">
           <p class="text-body-1">Sidebar is <strong>expanded</strong> (260px). Toggle the rail prop to collapse it.</p>
@@ -71,7 +71,7 @@ export const CollapsedRail: Story = {
       return { open, rail }
     },
     template: `
-      <v-layout style="height: 600px;">
+      <v-layout style="height: 600px;" class="bg-surface">
         <AppSidebar v-model="open" v-model:rail="rail" />
         <v-main class="pa-6">
           <p class="text-body-1">Sidebar is in <strong>rail mode</strong> (icon-only, 72px).</p>
