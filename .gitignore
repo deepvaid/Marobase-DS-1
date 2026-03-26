@@ -16,8 +16,6 @@ storybook-static
 .env
 .env.*
 
-# Design tokens generated output
-src/design-tokens/generated/
 
 # Coverage
 coverage
