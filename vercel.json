@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm run build && pnpm run build-storybook && cp -r dist-storybook dist/storybook",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build && npm run build-storybook && cp -r dist-storybook dist/storybook",
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
