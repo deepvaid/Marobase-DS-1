@@ -1,113 +1,72 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAnalyticsStore } from '@/stores/useAnalytics'
-import { useCommerceStore } from '@/stores/useCommerce'
-import { useCampaignsStore } from '@/stores/useCampaigns'
-import { useDaVinciStore } from '@/stores/useDaVinci'
+import { useDashboardStore, type WidgetSize } from '@/stores/useDashboard'
 import MpPageHeader from '@/components/MpPageHeader.vue'
-import MpKpiCard from '@/components/MpKpiCard.vue'
-import MpSectionHeader from '@/components/MpSectionHeader.vue'
-import MpStatusChip from '@/components/MpStatusChip.vue'
+import MpDashboardFilters from '@/components/MpDashboardFilters.vue'
+import MpDashboardWidget from '@/components/MpDashboardWidget.vue'
+import MpWidgetCatalog from '@/components/MpWidgetCatalog.vue'
 
-const analytics = useAnalyticsStore()
-const commerce = useCommerceStore()
-const campaigns = useCampaignsStore()
-const daVinci = useDaVinciStore()
+// Widget content components
+import WidgetKpiRow from '@/components/widgets/WidgetKpiRow.vue'
+import WidgetRevenueChart from '@/components/widgets/WidgetRevenueChart.vue'
+import WidgetActivityFeed from '@/components/widgets/WidgetActivityFeed.vue'
+import WidgetTopCampaigns from '@/components/widgets/WidgetTopCampaigns.vue'
+import WidgetRecentOrders from '@/components/widgets/WidgetRecentOrders.vue'
+import WidgetDaVinciCustom from '@/components/widgets/WidgetDaVinciCustom.vue'
+import WidgetGoalGauge from '@/components/widgets/WidgetGoalGauge.vue'
+import WidgetLiveActivity from '@/components/widgets/WidgetLiveActivity.vue'
 
-const kpiCards = [
-  {
-    label: 'Total Revenue',
-    value: `$${analytics.accountMetrics.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 0 })}`,
-    trend: '+12.5%', trendPositive: true, subStat: 'vs. last month',
-    icon: 'mdi-currency-usd', color: 'success',
-  },
-  {
-    label: 'Active Subscribers',
-    value: analytics.accountMetrics.activeSubscribers.toLocaleString(),
-    trend: '+4.2%', trendPositive: true, subStat: '18,432 on newsletter',
-    icon: 'mdi-account-group', color: 'primary',
-  },
-  {
-    label: 'Avg. Email Open Rate',
-    value: `${analytics.accountMetrics.avgOpenRate}%`,
-    trend: '-1.1%', trendPositive: false, subStat: 'Industry avg: 21.3%',
-    icon: 'mdi-email-open-outline', color: 'warning',
-  },
-  {
-    label: 'Email Sends (MTD)',
-    value: analytics.accountMetrics.monthlySends.toLocaleString(),
-    trend: '+8.4%', trendPositive: true,
-    subStat: `${Math.round((analytics.accountMetrics.monthlySends / analytics.accountMetrics.monthlyLimit) * 100)}% of monthly plan`,
-    icon: 'mdi-send', color: 'secondary',
-  },
-]
+const dashboard = useDashboardStore()
 
-const recentOrders = commerce.orders.slice(0, 6)
-const topSendingCampaigns = campaigns.campaigns.filter(c => c.status === 'Sent').slice(0, 5)
+// Drag state
+const dragFromIndex = ref<number | null>(null)
 
-const activityFeed = [
-  { icon: 'mdi-email-check', color: 'success', text: 'Campaign "Flash Sale — 40% Off Sitewide" completed with 12,891 clicks.', time: '10 mins ago' },
-  { icon: 'mdi-account-check', color: 'primary', text: 'Segment "Lapsed 90 Days" recalculated: 4,201 contacts.', time: '1 hour ago' },
-  { icon: 'mdi-connection', color: 'secondary', text: 'New Shopify store connection authenticated successfully.', time: '3 hours ago' },
-  { icon: 'mdi-robot', color: 'info', text: 'Journey "Abandoned Cart — 3-Email Recovery" triggered 234 new enrollments.', time: '5 hours ago' },
-  { icon: 'mdi-cart-check', color: 'success', text: '47 orders received today — $8,234 in revenue.', time: 'Today' },
-]
-
-/* ── Chart Data ─────────────────────────────────────────────── */
-const activeRange = ref('30D')
-const chartData = {
-  '7D':  { revenue: [6200, 5800, 7100, 6900, 8200, 7600, 8400], engagement: [42, 39, 45, 43, 48, 46, 50], labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
-  '30D': { revenue: [18400, 21200, 19600, 24800, 22100, 26500, 23800, 28100, 25400, 31200, 27600, 34800], engagement: [38, 42, 40, 46, 43, 48, 45, 50, 47, 54, 49, 56], labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12'] },
-  '3M':  { revenue: [58000, 64000, 72000], engagement: [41, 45, 52], labels: ['Jan', 'Feb', 'Mar'] },
-  'YTD': { revenue: [58000, 64000, 72000, 68000, 78000], engagement: [41, 45, 52, 48, 55], labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'] },
+function onDragStart(index: number) {
+  dragFromIndex.value = index
 }
 
-function getChartPoints(data: number[], width: number, height: number, padding = 20) {
-  const max = Math.max(...data)
-  const min = Math.min(...data) * 0.8
-  const range = max - min || 1
-  const stepX = (width - padding * 2) / (data.length - 1)
-  return data.map((v, i) => ({
-    x: padding + i * stepX,
-    y: padding + (1 - (v - min) / range) * (height - padding * 2)
-  }))
+function onDrop(toIndex: number) {
+  if (dragFromIndex.value !== null && dragFromIndex.value !== toIndex) {
+    dashboard.reorderWidget(dragFromIndex.value, toIndex)
+  }
+  dragFromIndex.value = null
 }
 
-function svgPath(points: { x: number; y: number }[]) {
-  return points.map((p, i) => {
-    if (i === 0) return `M ${p.x} ${p.y}`
-    const prev = points[i - 1]
-    const cx1 = prev.x + (p.x - prev.x) * 0.4
-    const cx2 = p.x - (p.x - prev.x) * 0.4
-    return `C ${cx1} ${prev.y}, ${cx2} ${p.y}, ${p.x} ${p.y}`
-  }).join(' ')
+function onResize(id: string, size: WidgetSize) {
+  dashboard.resizeWidget(id, size)
 }
 
-function svgArea(points: { x: number; y: number }[], height: number) {
-  const path = svgPath(points)
-  const last = points[points.length - 1]
-  const first = points[0]
-  return `${path} L ${last.x} ${height} L ${first.x} ${height} Z`
+// Snackbar for widget removal undo
+const snackbar = ref(false)
+const removedWidget = ref<any>(null)
+
+function removeWithUndo(id: string) {
+  const idx = dashboard.widgets.findIndex(w => w.id === id)
+  if (idx === -1) return
+  removedWidget.value = { ...dashboard.widgets[idx], _index: idx }
+  dashboard.removeWidget(id)
+  snackbar.value = true
 }
 
-/* ── Da Vinci insight overlay on chart ──────────────────────── */
-const showDvInsight = ref(false)
-const dvInsightText = ref('')
-const dvInsightLoading = ref(false)
-
-function askDaVinciChart() {
-  dvInsightLoading.value = true
-  showDvInsight.value = true
-  dvInsightText.value = ''
-
-  setTimeout(() => {
-    dvInsightLoading.value = false
-    dvInsightText.value = `📊 Revenue grew 12.5% MoM, driven primarily by the "Flash Sale" campaign which alone contributed $34.8K. Engagement rates peaked in Week 10 at 54%, coinciding with the abandoned cart journey launch. I recommend doubling down on automated journeys — they're outperforming manual campaigns by 2.3x on ROI.`
-  }, 1500)
+function undoRemove() {
+  if (removedWidget.value) {
+    const { _index, ...widget } = removedWidget.value
+    dashboard.widgets.splice(_index, 0, widget)
+    removedWidget.value = null
+    snackbar.value = false
+  }
 }
 
-function askDaVinciFull() {
-  daVinci.openWithQuery('Compare this month vs last month')
+// Multi-dashboard
+const showNewDashDialog = ref(false)
+const newDashName = ref('')
+
+function createDashboard() {
+  if (newDashName.value.trim()) {
+    dashboard.addDashboard(newDashName.value.trim())
+  }
+  newDashName.value = ''
+  showNewDashDialog.value = false
 }
 </script>
 
@@ -119,217 +78,220 @@ function askDaVinciFull() {
       :breadcrumbs="[{ title: 'Home', disabled: true }]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-calendar-range" class="text-none">Last 30 Days</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" to="/campaigns/new">Create Campaign</v-btn>
+        <v-btn
+          :variant="dashboard.editMode ? 'flat' : 'outlined'"
+          :color="dashboard.editMode ? 'primary' : 'default'"
+          :prepend-icon="dashboard.editMode ? 'mdi-check' : 'mdi-pencil-outline'"
+          class="text-none"
+          @click="dashboard.toggleEditMode()"
+        >
+          {{ dashboard.editMode ? 'Done' : 'Customize' }}
+        </v-btn>
+        <v-btn
+          variant="tonal"
+          color="primary"
+          prepend-icon="mdi-plus"
+          class="text-none"
+          @click="dashboard.catalogOpen = true"
+        >Add Widget</v-btn>
+        <v-menu location="bottom end">
+          <template #activator="{ props: menuProps }">
+            <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" v-bind="menuProps">Create</v-btn>
+          </template>
+          <v-list rounded="lg" elevation="4" class="py-1 mt-1" density="compact">
+            <v-list-item to="/campaigns/new">
+              <template #prepend><v-icon size="18" class="mr-2 text-medium-emphasis">mdi-bullhorn-outline</v-icon></template>
+              <v-list-item-title class="text-body-2 font-weight-medium">Campaign</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <template #prepend><v-icon size="18" class="mr-2 text-medium-emphasis">mdi-sitemap-outline</v-icon></template>
+              <v-list-item-title class="text-body-2 font-weight-medium">Journey</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <template #prepend><v-icon size="18" class="mr-2 text-medium-emphasis">mdi-account-plus-outline</v-icon></template>
+              <v-list-item-title class="text-body-2 font-weight-medium">Contact</v-list-item-title>
+            </v-list-item>
+            <v-divider class="my-1"></v-divider>
+            <v-list-item>
+              <template #prepend><v-icon size="18" class="mr-2 text-medium-emphasis">mdi-box-variant-outline</v-icon></template>
+              <v-list-item-title class="text-body-2 font-weight-medium">Product</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <template #prepend><v-icon size="18" class="mr-2 text-medium-emphasis">mdi-shape-outline</v-icon></template>
+              <v-list-item-title class="text-body-2 font-weight-medium">Category</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </MpPageHeader>
 
-    <!-- KPI Metric Cards -->
-    <v-row class="mb-6" dense>
-      <v-col v-for="card in kpiCards" :key="card.label" cols="12" sm="6" lg="3">
-        <MpKpiCard v-bind="card" />
-      </v-col>
-    </v-row>
-
-    <!-- Main Body: Chart Area + Activity Feed -->
-    <v-row class="mb-6" dense>
-      <v-col cols="12" lg="8">
-        <v-card variant="flat" border rounded="xl" class="pa-5">
-          <MpSectionHeader title="Revenue & Engagement Overview">
-            <template #actions>
-              <v-btn color="purple" variant="tonal" size="x-small" prepend-icon="mdi-auto-fix" class="text-none mr-3 font-weight-bold" @click="askDaVinciChart">Ask Da Vinci</v-btn>
-              <v-btn v-for="r in ['7D','30D','3M','YTD']" :key="r"
-                :variant="r === activeRange ? 'elevated' : 'text'"
-                :color="r === activeRange ? 'primary' : 'medium-emphasis'"
-                size="x-small" class="text-none"
-                @click="activeRange = r"
-              >{{ r }}</v-btn>
+    <div class="dashboard-tabs-wrapper px-6 bg-surface border-b">
+      <v-tabs v-model="dashboard.activeDashboardId" color="primary" density="compact" height="36" class="dashboard-tabs">
+        <v-tab
+          v-for="dash in dashboard.dashboards"
+          :key="dash.id"
+          :value="dash.id"
+          class="text-none font-weight-medium"
+        >
+          {{ dash.name }}
+          
+          <v-menu v-if="dashboard.dashboards.length > 1" offset="y" open-on-hover>
+            <template #activator="{ props }">
+              <v-btn icon="mdi-dots-vertical" variant="text" size="x-small" class="ml-1 mr-n2" v-bind="props" @click.stop></v-btn>
             </template>
-          </MpSectionHeader>
+            <v-list density="compact" elevation="2">
+              <v-list-item @click="dashboard.removeDashboard(dash.id)" class="text-error">
+                <v-list-item-title class="text-caption font-weight-medium">Delete</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-tab>
+        
+        <v-btn
+          variant="text"
+          size="small"
+          class="ml-2 align-self-center px-1 text-none"
+          color="medium-emphasis"
+          min-width="32"
+          rounded="lg"
+          @click="showNewDashDialog = true"
+        >
+          <v-icon size="18">mdi-plus</v-icon>
+        </v-btn>
+      </v-tabs>
+    </div>
 
-          <!-- SVG Chart -->
-          <div class="chart-container position-relative mt-2">
-            <svg viewBox="0 0 700 240" class="w-100" preserveAspectRatio="xMidYMid meet" style="height: 240px;">
-              <!-- Grid lines -->
-              <line v-for="i in 5" :key="'g'+i" :x1="20" :x2="680" :y1="20 + (i-1)*50" :y2="20 + (i-1)*50" stroke="rgba(0,0,0,0.05)" stroke-width="1" />
-              <!-- Revenue area -->
-              <path
-                :d="svgArea(getChartPoints(chartData[activeRange as keyof typeof chartData].revenue, 700, 240), 240)"
-                fill="url(#revenueGradient)" opacity="0.15"
-              />
-              <!-- Revenue line -->
-              <path
-                :d="svgPath(getChartPoints(chartData[activeRange as keyof typeof chartData].revenue, 700, 240))"
-                fill="none" stroke="#6366F1" stroke-width="2.5" stroke-linecap="round"
-              />
-              <!-- Revenue dots -->
-              <circle v-for="(pt, i) in getChartPoints(chartData[activeRange as keyof typeof chartData].revenue, 700, 240)" :key="'rd'+i"
-                :cx="pt.x" :cy="pt.y" r="4" fill="#6366F1" stroke="white" stroke-width="2"
-              />
-              <!-- Engagement area -->
-              <path
-                :d="svgArea(getChartPoints(chartData[activeRange as keyof typeof chartData].engagement, 700, 240), 240)"
-                fill="url(#engagementGradient)" opacity="0.1"
-              />
-              <!-- Engagement line -->
-              <path
-                :d="svgPath(getChartPoints(chartData[activeRange as keyof typeof chartData].engagement, 700, 240))"
-                fill="none" stroke="#10B981" stroke-width="2" stroke-dasharray="6 3" stroke-linecap="round"
-              />
-              <!-- Engagement dots -->
-              <circle v-for="(pt, i) in getChartPoints(chartData[activeRange as keyof typeof chartData].engagement, 700, 240)" :key="'ed'+i"
-                :cx="pt.x" :cy="pt.y" r="3" fill="#10B981" stroke="white" stroke-width="2"
-              />
-              <!-- Labels -->
-              <text v-for="(label, i) in chartData[activeRange as keyof typeof chartData].labels" :key="'lb'+i"
-                :x="20 + i * ((700 - 40) / (chartData[activeRange as keyof typeof chartData].labels.length - 1))"
-                y="235" text-anchor="middle" fill="rgba(0,0,0,0.4)" font-size="10"
-              >{{ label }}</text>
-              <!-- Gradients -->
-              <defs>
-                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#6366F1" />
-                  <stop offset="100%" stop-color="#6366F1" stop-opacity="0" />
-                </linearGradient>
-                <linearGradient id="engagementGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#10B981" />
-                  <stop offset="100%" stop-color="#10B981" stop-opacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <!-- Legend -->
-            <div class="d-flex align-center gap-4 mt-2 ml-2">
-              <div class="d-flex align-center gap-1">
-                <span style="width:12px; height:3px; border-radius:2px; background:#6366F1; display:inline-block;"></span>
-                <span class="text-caption text-medium-emphasis">Revenue</span>
-              </div>
-              <div class="d-flex align-center gap-1">
-                <span style="width:12px; height:3px; border-radius:2px; background:#10B981; display:inline-block; border-top: 1px dashed #10B981;"></span>
-                <span class="text-caption text-medium-emphasis">Engagement %</span>
-              </div>
-            </div>
+    <MpDashboardFilters />
 
-            <!-- Da Vinci Insight Overlay -->
-            <v-expand-transition>
-              <div v-if="showDvInsight" class="dv-insight-overlay">
-                <v-card variant="flat" rounded="xl" class="pa-4 dv-insight-card">
-                  <div class="d-flex align-center gap-2 mb-2">
-                    <v-icon color="purple" size="18">mdi-creation</v-icon>
-                    <span class="text-subtitle-2 font-weight-bold text-purple">Da Vinci Insight</span>
-                    <v-spacer />
-                    <v-btn icon variant="text" size="x-small" @click="showDvInsight = false"><v-icon size="16">mdi-close</v-icon></v-btn>
-                  </div>
-                  <div v-if="dvInsightLoading" class="d-flex align-center gap-2 py-2">
-                    <v-progress-circular indeterminate color="purple" size="20" width="2"></v-progress-circular>
-                    <span class="text-body-2 text-medium-emphasis">Analyzing your data...</span>
-                  </div>
-                  <div v-else class="text-body-2" style="line-height: 1.6;">{{ dvInsightText }}</div>
-                  <div v-if="!dvInsightLoading" class="d-flex align-center gap-2 mt-3">
-                    <v-btn size="small" variant="tonal" color="purple" class="text-none font-weight-bold" prepend-icon="mdi-auto-fix" @click="askDaVinciFull">Explore in Copilot</v-btn>
-                    <v-btn size="small" variant="text" class="text-none" prepend-icon="mdi-thumb-up-outline">Helpful</v-btn>
-                  </div>
-                </v-card>
-              </div>
-            </v-expand-transition>
+    <!-- Edit mode banner -->
+    <v-expand-transition>
+      <v-alert
+        v-if="dashboard.editMode"
+        type="info"
+        variant="tonal"
+        density="compact"
+        rounded="lg"
+        class="mb-4"
+        closable
+        @click:close="dashboard.toggleEditMode()"
+      >
+        <template #prepend>
+          <v-icon>mdi-cursor-move</v-icon>
+        </template>
+        <strong>Editing dashboard</strong> — Drag widgets to reorder, use the menu to resize (S/M/L) or remove. Click "Done" when finished.
+        <template #append>
+          <v-btn size="small" variant="text" color="primary" class="text-none ml-2" @click="dashboard.resetToDefault()">
+            <v-icon size="16" start>mdi-restore</v-icon>Reset to Default
+          </v-btn>
+        </template>
+      </v-alert>
+    </v-expand-transition>
+
+    <!-- Widget Grid -->
+    <div class="widget-grid" :class="{ 'edit-mode-grid': dashboard.editMode }">
+      <MpDashboardWidget
+        v-for="(widget, index) in dashboard.widgets"
+        :key="widget.id"
+        :widget-id="widget.id"
+        :title="widget.title"
+        :size="widget.size"
+        :edit-mode="dashboard.editMode"
+        :index="index"
+        @resize="onResize"
+        @remove="removeWithUndo"
+        @drag-start="onDragStart"
+        @drop="onDrop"
+      >
+        <!-- Render correct content based on widget type -->
+        <WidgetKpiRow v-if="widget.type === 'kpi-row'" />
+        <WidgetRevenueChart v-else-if="widget.type === 'revenue-chart'" />
+        <WidgetActivityFeed v-else-if="widget.type === 'activity-feed'" />
+        <WidgetTopCampaigns v-else-if="widget.type === 'campaign-list'" />
+        <WidgetRecentOrders v-else-if="widget.type === 'order-list'" />
+        <WidgetGoalGauge v-else-if="widget.type === 'goal-gauge'" :config="widget.config" />
+        <WidgetLiveActivity v-else-if="widget.type === 'live-activity'" />
+        <WidgetDaVinciCustom
+          v-else-if="widget.type === 'davinci-custom'"
+          :custom-data="widget.customData"
+          :custom-query="widget.customQuery"
+        />
+      </MpDashboardWidget>
+
+      <!-- Empty state when no widgets -->
+      <div v-if="dashboard.widgets.length === 0" class="empty-dashboard">
+        <v-card variant="flat" border rounded="xl" class="pa-12 text-center" style="grid-column: span 12;">
+          <v-icon size="64" color="primary" class="mb-4" style="opacity: 0.2;">mdi-view-dashboard-outline</v-icon>
+          <h3 class="text-h5 font-weight-bold mb-2">Your dashboard is empty</h3>
+          <p class="text-body-2 text-medium-emphasis mb-6">Add widgets to customize your dashboard, or ask Da Vinci to create one for you.</p>
+          <div class="d-flex justify-center gap-3">
+            <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="dashboard.catalogOpen = true">Add Widget</v-btn>
+            <v-btn variant="outlined" prepend-icon="mdi-restore" class="text-none" @click="dashboard.resetToDefault()">Restore Defaults</v-btn>
           </div>
         </v-card>
-      </v-col>
-      <v-col cols="12" lg="4">
-        <v-card variant="flat" border rounded="xl" class="h-100 pa-5">
-          <MpSectionHeader title="Recent Activity" />
-          <v-list lines="two" density="compact" :border="false" class="pa-0">
-            <v-list-item
-              v-for="(item, idx) in activityFeed"
-              :key="idx"
-              class="px-5 py-3 border-b"
-            >
-              <template v-slot:prepend>
-                <v-avatar :color="item.color" variant="tonal" size="36" class="mr-3">
-                  <v-icon :color="item.color" size="18">{{ item.icon }}</v-icon>
-                </v-avatar>
-              </template>
-              <v-list-item-title class="text-body-2 font-weight-medium" style="white-space: normal; line-height: 1.3;">{{ item.text }}</v-list-item-title>
-              <v-list-item-subtitle class="text-caption">{{ item.time }}</v-list-item-subtitle>
-            </v-list-item>
-          </v-list>
-          <v-btn block variant="text" color="primary" class="text-none mt-4" append-icon="mdi-arrow-right">View Full Audit Log</v-btn>
-        </v-card>
-      </v-col>
-    </v-row>
+      </div>
+    </div>
 
-    <!-- Bottom Split: Top Campaigns + Recent Orders -->
-    <v-row dense>
-      <v-col cols="12" lg="6">
-        <v-card variant="flat" border rounded="xl">
-          <div class="pa-5 d-flex justify-space-between align-center border-b">
-            <div class="text-h6 font-weight-medium">Top Campaigns by Revenue</div>
-            <v-btn variant="text" size="small" color="primary" class="text-none" to="/campaigns">View All</v-btn>
-          </div>
-          <v-list lines="two" density="compact" :border="false" class="pa-0">
-            <v-list-item v-for="camp in topSendingCampaigns" :key="camp.id" class="px-5 py-3 border-b">
-              <template v-slot:prepend>
-                <v-avatar color="success" variant="tonal" size="36" class="mr-3">
-                  <v-icon color="success" size="18">mdi-email-check</v-icon>
-                </v-avatar>
-              </template>
-              <v-list-item-title class="text-body-2 font-weight-medium">{{ camp.name.substring(0, 45) }}...</v-list-item-title>
-              <v-list-item-subtitle>
-                <v-chip size="x-small" variant="tonal" color="success" class="mr-2">{{ Math.floor((camp.metrics.opens / camp.metrics.sent) * 100) }}% open</v-chip>
-                <span class="text-caption">${{ camp.metrics.revenue.toLocaleString() }} revenue</span>
-              </v-list-item-subtitle>
-              <template v-slot:append>
-                <span class="text-caption text-medium-emphasis">{{ camp.sentDate }}</span>
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
+    <!-- Widget Catalog Drawer -->
+    <MpWidgetCatalog />
 
-      <v-col cols="12" lg="6">
-        <v-card variant="flat" border rounded="xl">
-          <div class="pa-5 d-flex justify-space-between align-center border-b">
-            <div class="text-h6 font-weight-medium">Recent Orders</div>
-            <v-btn variant="text" size="small" color="primary" class="text-none" to="/commerce/orders">View All</v-btn>
-          </div>
-          <v-list lines="two" density="compact" :border="false" class="pa-0">
-            <v-list-item v-for="order in recentOrders" :key="order.id" class="px-5 py-3 border-b">
-              <template v-slot:prepend>
-                <v-avatar color="primary" variant="tonal" size="36" class="mr-3 font-weight-bold text-caption">{{ order.customer.avatar }}</v-avatar>
-              </template>
-              <v-list-item-title class="text-body-2 font-weight-medium">{{ order.customer.name }}</v-list-item-title>
-              <v-list-item-subtitle class="text-caption">{{ order.orderNumber }} · {{ order.itemCount }} items · {{ order.date }}</v-list-item-subtitle>
-              <template v-slot:append>
-                <div class="text-right">
-                  <div class="font-weight-bold text-body-2">${{ order.total }}</div>
-                  <MpStatusChip :status="order.status || ''" type="order" size="x-small" variant="flat" />
-                </div>
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
-    </v-row>
+    <!-- Undo snackbar -->
+    <v-snackbar v-model="snackbar" :timeout="5000" location="bottom" color="surface" rounded="lg">
+      <div class="d-flex align-center gap-2">
+        <v-icon size="18" color="warning">mdi-information-outline</v-icon>
+        <span class="text-body-2">Widget removed</span>
+      </div>
+      <template #actions>
+        <v-btn variant="text" color="primary" size="small" class="text-none font-weight-bold" @click="undoRemove">Undo</v-btn>
+        <v-btn variant="text" size="small" class="text-none" @click="snackbar = false">Dismiss</v-btn>
+      </template>
+    </v-snackbar>
+
+    <!-- New Dashboard Dialog -->
+    <v-dialog v-model="showNewDashDialog" max-width="360" persistent>
+      <v-card rounded="xl" class="pa-4">
+        <h3 class="text-subtitle-1 font-weight-bold mb-4">Create New Dashboard</h3>
+        <v-text-field
+          v-model="newDashName"
+          label="Dashboard Name"
+          variant="outlined"
+          density="compact"
+          hide-details
+          placeholder="e.g. Sales KPIs"
+          autofocus
+          @keyup.enter="createDashboard"
+        ></v-text-field>
+        <div class="d-flex justify-end gap-2 mt-4">
+          <v-btn variant="text" size="small" class="text-none" @click="showNewDashDialog = false">Cancel</v-btn>
+          <v-btn color="primary" variant="flat" size="small" class="text-none" @click="createDashboard" :disabled="!newDashName.trim()">Create</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <style scoped>
-.chart-container {
-  position: relative;
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  transition: all 0.3s ease;
 }
-.gap-4 { gap: 16px; }
-.gap-2 { gap: 8px; }
-.gap-1 { gap: 4px; }
-.dv-insight-overlay {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  z-index: 10;
+
+.edit-mode-grid {
+  padding: 8px;
+  border-radius: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent calc(8.333% - 1px),
+    rgba(var(--v-theme-primary), 0.03) calc(8.333% - 1px),
+    rgba(var(--v-theme-primary), 0.03) 8.333%
+  );
 }
-.dv-insight-card {
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+
+.gap-3 { gap: 12px; }
+
+.empty-dashboard {
+  grid-column: 1 / -1;
 }
 </style>

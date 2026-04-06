@@ -1,10 +1,16 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   title?: string
   subtitle?: string
   bars: number[][]
   labels?: string[]
   seriesNames?: string[]
+}>()
+
+const emit = defineEmits<{
+  save: []
+  download: []
+  expand: []
 }>()
 
 // Chart series palette — references Vuetify theme primary via CSS custom properties
@@ -29,10 +35,19 @@ function getMax(bars: number[][]) {
           <div class="text-subtitle-2 font-weight-bold">{{ title || 'Analysis Results' }}</div>
           <div v-if="subtitle" class="text-caption text-medium-emphasis mt-1">{{ subtitle }}</div>
         </div>
-        <div class="d-flex ga-1">
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-content-save-outline</v-icon></v-btn>
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-download-outline</v-icon></v-btn>
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-arrow-expand</v-icon></v-btn>
+        <div class="d-flex ga-1 chart-action-btns">
+          <v-btn icon size="28" variant="text" @click="emit('save')">
+            <v-icon size="16">mdi-content-save-outline</v-icon>
+            <v-tooltip activator="parent" location="bottom">Save to widgets</v-tooltip>
+          </v-btn>
+          <v-btn icon size="28" variant="text" @click="emit('download')">
+            <v-icon size="16">mdi-download-outline</v-icon>
+            <v-tooltip activator="parent" location="bottom">Download PNG</v-tooltip>
+          </v-btn>
+          <v-btn icon size="28" variant="text" @click="emit('expand')">
+            <v-icon size="16">mdi-arrow-expand</v-icon>
+            <v-tooltip activator="parent" location="bottom">Expand chart</v-tooltip>
+          </v-btn>
         </div>
       </div>
 
@@ -66,8 +81,17 @@ function getMax(bars: number[][]) {
 </template>
 
 <style scoped>
-.chart-area { display: flex; gap: $mp-space-1; height: 140px; }
-.chart-y-labels { display: flex; flex-direction: column; justify-content: space-between; font-size: $mp-typography-fontSize-xs; color: rgba(var(--v-theme-on-surface), 0.45); min-width: 36px; text-align: right; padding-right: 6px; }
+.chart-area { display: flex; gap: 4px; height: 140px; }
+.chart-y-labels { display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: rgba(var(--v-theme-on-surface), 0.45); min-width: 36px; text-align: right; padding-right: 6px; }
 .chart-bars-wrap { display: flex; align-items: flex-end; gap: 3px; flex: 1; border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); padding: 0 2px; }
 .chart-bar-col { flex: 1; display: flex; flex-direction: column-reverse; }
+
+.chart-action-btns .v-btn {
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+.chart-action-btns .v-btn:hover {
+  opacity: 1;
+  color: rgb(var(--v-theme-primary));
+}
 </style>
