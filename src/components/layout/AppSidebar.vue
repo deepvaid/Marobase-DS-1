@@ -77,6 +77,9 @@ const navGroups: NavGroup[] = [
       { title: 'Fulfillment',    route: '/commerce/fulfillments' },
       { title: 'Promos & Coupons', route: '/commerce/coupons' },
       { title: 'Sales Channels', route: '/commerce/store-setup' },
+      { title: 'Store Settings', route: '/commerce/stores/general' },
+      { title: 'Themes', route: '/commerce/stores/themes' },
+      { title: 'Navigation', route: '/commerce/stores/navigation' },
     ]
   },
   {
@@ -115,8 +118,12 @@ const navGroups: NavGroup[] = [
     icon: 'mdi-robot-outline',
     badge: 'NEW',
     items: [
-      { title: 'AI Dashboard', route: '/da-vinci/dashboard' },
+      { title: 'Discover AI', route: '/da-vinci/discover' },
       { title: 'AI Studio',    route: '/da-vinci' },
+      { title: 'Journeys', route: '/da-vinci/journeys' },
+      { title: 'Personalization', route: '/da-vinci/personalization' },
+      { title: 'Marketing Assets', route: '/da-vinci/marketing-assets' },
+      { title: 'Customer Bot', route: '/da-vinci/customer-bot' },
     ]
   },
   {

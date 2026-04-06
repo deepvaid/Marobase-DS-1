@@ -106,6 +106,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
           </template>
         </v-tooltip>
         <v-divider vertical class="mx-1" style="height:24px;"></v-divider>
+        <v-btn color="purple" variant="tonal" size="small" class="text-none font-weight-bold" prepend-icon="mdi-auto-fix">Auto-Build with Da Vinci</v-btn>
         <v-btn variant="outlined" size="small" class="text-none" @click="saveSnack=true">Save Draft</v-btn>
         <v-btn color="success" variant="elevated" size="small" class="text-none" prepend-icon="mdi-play" @click="journeyStatus='Active';saveSnack=true">Activate</v-btn>
       </div>

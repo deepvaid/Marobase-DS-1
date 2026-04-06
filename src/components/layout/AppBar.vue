@@ -87,7 +87,7 @@ function toggleTheme() {
             v-bind="props"
             size="small"
             :variant="copilotOpen ? 'flat' : 'text'"
-            :color="copilotOpen ? 'warning' : undefined"
+            :color="copilotOpen ? 'purple' : undefined"
             icon
             @click="copilotOpen = !copilotOpen"
             class="copilot-trigger"
@@ -205,7 +205,7 @@ function toggleTheme() {
   transition: all $mp-transition-base;
 }
 .copilot-trigger:hover {
-  color: rgb(var(--v-theme-warning));
+  color: #7C3AED;
 }
 
 .appbar-search {

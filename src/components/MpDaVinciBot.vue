@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, watch } from 'vue'
+import { useDaVinciStore } from '@/stores/useDaVinci'
 
 // Import rich components
 import DvChartCard from './copilot/DvChartCard.vue'
@@ -131,6 +132,16 @@ function newChat() {
   messages.value = []
   inputText.value = ''
 }
+
+/* ── Auto-process queries from Da Vinci store ──────────────────── */
+const dvStore = useDaVinciStore()
+
+watch(() => dvStore.pendingQuery, (q) => {
+  if (q) {
+    const query = dvStore.consumeQuery()
+    processQuery(query)
+  }
+})
 </script>
 
 <template>
@@ -144,7 +155,7 @@ function newChat() {
         <div class="text-subtitle-2 font-weight-bold da-vinci-title">Da Vinci Bot</div>
         <div class="text-caption text-medium-emphasis da-vinci-subtitle">Intelligent AI assistant</div>
       </div>
-      <v-btn icon size="32" color="primary" variant="flat" @click="newChat">
+      <v-btn icon size="32" color="purple" variant="flat" @click="newChat">
         <v-icon size="18">mdi-plus</v-icon>
         <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
       </v-btn>
@@ -241,7 +252,7 @@ function newChat() {
           <!-- Assistant response -->
           <div v-else class="mb-8">
             <div class="d-flex align-start ga-3 mb-2">
-              <v-avatar size="24" color="primary" class="mt-1">
+              <v-avatar size="24" color="purple" class="mt-1">
                 <v-icon size="14" color="white">mdi-creation</v-icon>
               </v-avatar>
               <div class="text-body-2 pt-1 da-vinci-assistant-text">{{ msg.text }}</div>
@@ -260,6 +271,22 @@ function newChat() {
                 <DvActionCard v-else-if="comp.type === 'action'" v-bind="comp.props" />
                 <DvInsightCard v-else-if="comp.type === 'insight'" v-bind="comp.props" />
               </template>
+            </div>
+
+            <!-- Human Feedback Actions -->
+            <div class="pl-10 mt-2 d-flex align-center ga-1 feedback-row">
+              <v-btn icon variant="text" size="x-small" color="medium-emphasis" class="feedback-btn" @click="(msg as any)._fb = 'up'">
+                <v-icon size="16" :color="(msg as any)._fb === 'up' ? 'success' : ''">{{ (msg as any)._fb === 'up' ? 'mdi-thumb-up' : 'mdi-thumb-up-outline' }}</v-icon>
+                <v-tooltip activator="parent" location="bottom">Good response</v-tooltip>
+              </v-btn>
+              <v-btn icon variant="text" size="x-small" color="medium-emphasis" class="feedback-btn" @click="(msg as any)._fb = 'down'">
+                <v-icon size="16" :color="(msg as any)._fb === 'down' ? 'error' : ''">{{ (msg as any)._fb === 'down' ? 'mdi-thumb-down' : 'mdi-thumb-down-outline' }}</v-icon>
+                <v-tooltip activator="parent" location="bottom">Needs improvement</v-tooltip>
+              </v-btn>
+              <v-btn icon variant="text" size="x-small" color="medium-emphasis" class="feedback-btn">
+                <v-icon size="16">mdi-content-copy</v-icon>
+                <v-tooltip activator="parent" location="bottom">Copy response</v-tooltip>
+              </v-btn>
             </div>
           </div>
         </template>
@@ -363,8 +390,8 @@ function newChat() {
   border-radius: 50%;
   background: linear-gradient(
     135deg,
-    rgb(var(--v-theme-warning)) 0%,
-    rgb(var(--v-theme-warning-darken-1)) 100%
+    #7C3AED 0%,
+    #6D28D9 100%
   );
   display: flex;
   align-items: center;

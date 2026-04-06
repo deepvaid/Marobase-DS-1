@@ -1,17 +1,28 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppBar from '@/components/layout/AppBar.vue'
 import MpDaVinciBot from '@/components/MpDaVinciBot.vue'
+import { useDaVinciStore } from '@/stores/useDaVinci'
 
 const route = useRoute()
 const drawer = ref(true)
 const rail = ref(false)
 const copilotOpen = ref(false)
 const copilotExpanded = ref(false)
+const daVinci = useDaVinciStore()
 
 const isFullPage = computed(() => !!route.meta?.fullPage)
+
+// Sync: when the store opens from anywhere, open the drawer
+watch(() => daVinci.isOpen, (v) => {
+  if (v) copilotOpen.value = true
+})
+// Sync back: when drawer closes, update store
+watch(copilotOpen, (v) => {
+  if (!v) daVinci.isOpen = false
+})
 </script>
 
 <template>

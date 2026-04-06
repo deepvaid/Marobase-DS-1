@@ -152,7 +152,13 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
                 hint="Keep under 60 characters for best open rates"
                 persistent-hint
                 class="mb-4"
-              ></v-text-field>
+                append-inner-icon="mdi-auto-fix"
+                @click:append-inner="setup.subject = '🔥 VIP Early Access: 40% Off Your Favorite Brands!'"
+              >
+                <template v-slot:append-inner>
+                   <v-icon color="purple" class="cursor-pointer">mdi-auto-fix</v-icon>
+                </template>
+              </v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
@@ -164,7 +170,13 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
                 hint="Shown in inbox previews after the subject line"
                 persistent-hint
                 class="mb-4"
-              ></v-text-field>
+                append-inner-icon="mdi-auto-fix"
+                @click:append-inner="setup.preheader = 'Shop the VIP sale before anyone else. Deals this good won\'t last...'"
+              >
+                <template v-slot:append-inner>
+                   <v-icon color="purple" class="cursor-pointer">mdi-auto-fix</v-icon>
+                </template>
+              </v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field v-model="setup.senderName" label="Sender Name" variant="outlined" density="comfortable" class="mb-4"></v-text-field>

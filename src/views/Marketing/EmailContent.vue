@@ -20,6 +20,7 @@ const items = [
       ]"
     >
       <template #actions>
+        <v-btn color="purple" variant="tonal" prepend-icon="mdi-auto-fix" class="text-none font-weight-bold mr-2">Generate with Da Vinci</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Create Content</v-btn>
       </template>
     </MpPageHeader>

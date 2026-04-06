@@ -44,6 +44,10 @@ const routes = [
   { path: '/commerce/fulfillments', name: 'Fulfillments', component: () => import('@/views/Commerce/Fulfillments.vue') },
   { path: '/commerce/coupons', name: 'Coupons', component: () => import('@/views/Commerce/Coupons.vue') },
   { path: '/commerce/store-setup', name: 'StoreSetup', component: () => import('@/views/Commerce/StoreSetup.vue') },
+  { path: '/commerce/stores/general', name: 'StoreGeneral', component: () => import('@/views/Commerce/StoreGeneral.vue') },
+  { path: '/commerce/stores/themes', name: 'StoreThemes', component: () => import('@/views/Commerce/StoreThemes.vue') },
+  { path: '/commerce/stores/navigation', name: 'StoreNavigation', component: () => import('@/views/Commerce/StoreNavigation.vue') },
+  { path: '/commerce/themes/builder', name: 'StoreBuilder', component: () => import('@/views/Commerce/StoreBuilder.vue'), meta: { fullPage: true } },
 
   // 6. Marketing
   { path: '/campaigns/new', name: 'CreateCampaign', component: () => import('@/views/Marketing/CreateCampaign.vue'), meta: { fullPage: true } },
@@ -72,8 +76,26 @@ const routes = [
   { path: '/service/tickets', name: 'Tickets', component: () => import('@/views/Service/Tickets.vue') },
 
   // 8. Da Vinci
-  { path: '/da-vinci', name: 'DaVinciAI', component: () => import('@/views/DaVinci/DaVinciAI.vue') },
-  { path: '/da-vinci/dashboard', name: 'DaVinciDashboard', component: () => import('@/views/DaVinci/DaVinciDashboard.vue') },
+  {
+    path: '/da-vinci',
+    name: 'da-vinci',
+    component: () => import('../views/DaVinci/DaVinciDashboard.vue')
+  },
+  {
+    path: '/da-vinci/journeys',
+    name: 'da-vinci-journeys',
+    component: () => import('../views/DaVinci/DaVinciJourneys.vue')
+  },
+  {
+    path: '/da-vinci/personalization',
+    name: 'da-vinci-personalization',
+    component: () => import('../views/DaVinci/DaVinciPersonalization.vue')
+  },
+  {
+    path: '/da-vinci/marketing-assets', name: 'DaVinciMarketingAssets', component: () => import('@/views/DaVinci/MarketingAssets.vue')
+  },
+  { path: '/da-vinci/customer-bot', name: 'DaVinciCustomerBot', component: () => import('@/views/DaVinci/CustomerBot.vue') },
+  { path: '/da-vinci/discover', name: 'DaVinciDiscover', component: () => import('@/views/Marketing/DaVinciDiscover.vue'), meta: { fullPage: true } },
 
   // 9. Integrations
   { path: '/integrations', name: 'Integrations', component: () => import('@/views/Integrations/Integrations.vue') },
