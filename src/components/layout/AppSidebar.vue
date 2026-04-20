@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import maropostLogo from '@/assets/logo-svg.svg'
+import { useAccountStore, type ProductId } from '@/stores/useAccount'
 
 const props = defineProps<{
   modelValue: boolean
@@ -14,8 +15,8 @@ const emit = defineEmits<{
 }>()
 
 // ─── Navigation Structure ────────────────────────────────────
-interface NavItem { title: string; route: string; group?: string }
-interface NavGroup { title: string; icon: string; singleRoute?: string; badge?: string; items: NavItem[] }
+interface NavItem { title: string; route: string; group?: string; productId?: ProductId }
+interface NavGroup { title: string; icon: string; singleRoute?: string; badge?: string; productId?: ProductId; items: NavItem[] }
 
 const navGroups: NavGroup[] = [
   {
@@ -32,6 +33,7 @@ const navGroups: NavGroup[] = [
       { title: 'Sales by Order',              route: '/analytics/reports/orders' },
       { title: 'Dispatched Orders',           route: '/analytics/reports/dispatched_orders' },
       { title: 'Sales Summary',               route: '/analytics/reports/sales_summary' },
+      { title: 'eRFM Report',                 route: '/analytics/reports/erfm' },
       { title: 'Campaign Reports',            route: '/analytics/reports/campaign_reports' },
       { title: 'Recurring Reports',           route: '/analytics/reports/recurring_campaign_reports' },
       { title: 'A/B Campaign Reports',        route: '/analytics/reports/ab_campaign_reports' },
@@ -44,42 +46,31 @@ const navGroups: NavGroup[] = [
     ]
   },
   {
-    title: 'Contacts',
+    title: 'CDP',
     icon: 'mdi-account-group-outline',
     items: [
       { title: 'All Contacts',      route: '/contacts' },
-      { title: 'Contact Lists',     route: '/lists' },
+      { title: 'Contact Lists',     route: '/lists',                      productId: 'cdp_advanced' },
       { title: 'Segments',          route: '/segmentations' },
-      { title: 'Contact Fields',    route: '/contacts/fields' },
-      { title: 'Contact Tags',      route: '/tags' },
-      { title: 'Relational Tables', route: '/relational_tables' },
-      { title: 'SQL Queries',       route: '/sql_queries' },
-      { title: 'Secure Lists',      route: '/secure_lists' },
-      { title: 'Web Tracking',      route: '/marketing/tracking_domains' },
+      { title: 'Contact Fields',    route: '/contacts/fields',            productId: 'cdp_advanced' },
+      { title: 'Contact Tags',      route: '/tags',                       productId: 'cdp_advanced' },
+      { title: 'Relational Tables', route: '/relational_tables',          productId: 'cdp_advanced' },
+      { title: 'SQL Queries',       route: '/sql_queries',                productId: 'cdp_advanced' },
+      { title: 'Secure Lists',      route: '/secure_lists',               productId: 'cdp_advanced' },
+      { title: 'Web Tracking',      route: '/marketing/tracking_domains', productId: 'cdp_advanced' },
     ]
   },
   {
     title: 'Products',
     icon: 'mdi-package-variant',
+    productId: 'products',
     items: [
-      { title: 'Products List',          route: '/commerce/products' },
-      { title: 'Inventory',              route: '/commerce/inventory' },
-      { title: 'Reservations',           route: '/commerce/products/reservations' },
-      { title: 'Product Recommendations',route: '/product_recommendations' },
-    ]
-  },
-  {
-    title: 'Commerce',
-    icon: 'mdi-cart-outline',
-    items: [
-      { title: 'Sales Orders',   route: '/commerce/orders' },
-      { title: 'Draft Orders',   route: '/commerce/orders/drafts' },
-      { title: 'Fulfillment',    route: '/commerce/fulfillments' },
-      { title: 'Promos & Coupons', route: '/commerce/coupons' },
-      { title: 'Sales Channels', route: '/commerce/store-setup' },
-      { title: 'Store Settings', route: '/commerce/stores/general' },
-      { title: 'Themes', route: '/commerce/stores/themes' },
-      { title: 'Navigation', route: '/commerce/stores/navigation' },
+      { title: 'Product Recommendations', route: '/product_recommendations' },
+      { title: 'Products',                route: '/commerce/products' },
+      { title: 'Product Tax Category',    route: '/commerce/products/tax-categories' },
+      { title: 'Collections',             route: '/commerce/products/collections' },
+      { title: 'Inventory',               route: '/commerce/inventory' },
+      { title: 'Reservations',            route: '/commerce/products/reservations' },
     ]
   },
   {
@@ -107,8 +98,31 @@ const navGroups: NavGroup[] = [
     ]
   },
   {
+    title: 'Commerce',
+    icon: 'mdi-cart-outline',
+    productId: 'commerce',
+    items: [
+      { title: 'Sales Orders',   route: '/commerce/orders' },
+      { title: 'Draft Orders',   route: '/commerce/orders/drafts' },
+      { title: 'Fulfillment',    route: '/commerce/fulfillments' },
+      { title: 'Promos & Coupons', route: '/commerce/coupons' },
+      { title: 'Sales Channels', route: '/commerce/store-setup' },
+      { title: 'Store Settings', route: '/commerce/stores/general' },
+      { title: 'Themes', route: '/commerce/stores/themes' },
+      { title: 'Navigation', route: '/commerce/stores/navigation' },
+    ]
+  },
+  {
+    title: 'Retail',
+    icon: 'mdi-storefront-outline',
+    singleRoute: '/commerce/retail',
+    productId: 'retail',
+    items: []
+  },
+  {
     title: 'Service',
     icon: 'mdi-headset',
+    productId: 'service',
     items: [
       { title: 'Tickets', route: '/service/tickets' },
     ]
@@ -127,7 +141,7 @@ const navGroups: NavGroup[] = [
     ]
   },
   {
-    title: 'Integrations',
+    title: 'App Store',
     icon: 'mdi-puzzle-outline',
     singleRoute: '/integrations',
     items: []
@@ -147,9 +161,18 @@ const marketingGroups = ['Campaigns', 'Acquisition', 'Automation', 'Content']
 const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
 const router = useRouter()
+const accountStore = useAccountStore()
 
-function goTo(route: string) {
-  router.push(route)
+function isLocked(productId?: ProductId): boolean {
+  return productId ? !accountStore.hasEntitlement(productId) : false
+}
+
+function goTo(route: string, productId?: ProductId) {
+  if (productId && isLocked(productId)) {
+    router.push(`/cross-sell/${productId}`)
+  } else {
+    router.push(route)
+  }
 }
 </script>
 
@@ -184,73 +207,133 @@ function goTo(route: string) {
 
     <div class="my-1" />
 
-    <!-- Full Navigation (expanded mode) -->
+    <!-- Full Navigation (expanded mode) — hover flyout submenus -->
     <v-list density="compact" nav class="px-2 py-1 sidebar-scroll" v-if="!localRail">
       <template v-for="group in navGroups" :key="group.title">
+        <!-- Single-route items (Dashboard, Retail, App Store) — no flyout -->
         <v-list-item
           v-if="group.singleRoute"
-          :to="group.singleRoute"
-          @click="goTo(group.singleRoute)"
+          :to="isLocked(group.productId) ? undefined : group.singleRoute"
+          @click="goTo(group.singleRoute!, group.productId)"
           :prepend-icon="group.icon"
           :title="group.title"
           rounded="lg"
           active-class="active-nav-item"
           class="mb-1 sidebar-text"
         >
-          <template v-slot:append v-if="group.badge">
-            <v-chip size="x-small" color="success" variant="flat" class="sidebar-chip">{{ group.badge }}</v-chip>
+          <template v-slot:append>
+            <v-icon v-if="isLocked(group.productId)" icon="mdi-crown" size="14" class="sidebar-lock-crown" />
+            <v-chip v-else-if="group.badge" size="x-small" color="success" variant="flat" class="sidebar-chip">{{ group.badge }}</v-chip>
           </template>
         </v-list-item>
 
-        <v-list-group v-else :value="group.title" class="mb-1">
-          <template v-slot:activator="{ props }">
+        <!-- Group items — hover flyout to the right (or locked → cross-sell) -->
+        <template v-else-if="isLocked(group.productId)">
+          <v-list-item
+            :prepend-icon="group.icon"
+            :title="group.title"
+            rounded="lg"
+            class="mb-1 sidebar-text"
+            @click="goTo('', group.productId)"
+          >
+            <template v-slot:append>
+              <v-icon icon="mdi-crown" size="14" class="sidebar-lock-crown" />
+            </template>
+          </v-list-item>
+        </template>
+        <v-menu
+          v-else
+          location="end"
+          open-on-hover
+          :open-delay="80"
+          :close-delay="150"
+          offset="8"
+          :close-on-content-click="false"
+        >
+          <template v-slot:activator="{ props: menuProps }">
             <v-list-item
-              v-bind="props"
+              v-bind="menuProps"
               :prepend-icon="group.icon"
               :title="group.title"
               rounded="lg"
-              class="sidebar-text"
+              class="mb-1 sidebar-text sidebar-group-activator"
             >
-              <template v-slot:append="{ isActive }" v-if="group.badge">
-                <v-chip size="x-small" color="success" variant="flat" class="mr-1 sidebar-chip">{{ group.badge }}</v-chip>
-                <v-icon>{{ isActive ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+              <template v-slot:append>
+                <v-chip v-if="group.badge" size="x-small" color="success" variant="flat" class="mr-1 sidebar-chip">{{ group.badge }}</v-chip>
+                <v-icon size="16" icon="mdi-chevron-right" class="sidebar-muted" />
               </template>
             </v-list-item>
           </template>
 
-          <!-- Marketing gets grouped sub-sections -->
-          <template v-if="group.title === 'Marketing'">
-            <div v-for="subGroup in marketingGroups" :key="subGroup">
-              <div class="px-4 pt-2 pb-1">
-                <span class="text-uppercase font-weight-bold sidebar-subgroup">{{ subGroup }}</span>
-              </div>
-              <v-list-item
-                v-for="item in group.items.filter(i => i.group === subGroup)"
-                :key="item.title"
-                :title="item.title"
-                :to="item.route"
-                @click="goTo(item.route)"
-                rounded="lg"
-                exact
-                class="mb-0.5 sidebar-child-item sidebar-text"
-              />
-            </div>
-          </template>
+          <v-card :width="group.title === 'Marketing' ? 240 : 240" flat border rounded="xl" class="sidebar-surface sidebar-popover">
+            <v-list density="compact" class="bg-transparent py-1">
+              <v-list-subheader class="sidebar-subheader">{{ group.title }}</v-list-subheader>
 
-          <!-- All other groups — flat list -->
-          <template v-else>
-            <v-list-item
-              v-for="item in group.items"
-              :key="item.title"
-              :title="item.title"
-              :to="item.route"
-              @click="goTo(item.route)"
-              rounded="lg"
-              exact
-              class="mb-0.5 sidebar-child-item sidebar-text"
-            />
-          </template>
-        </v-list-group>
+              <!-- Marketing: nested flyouts (Campaigns / Acquisition / Automation / Content) -->
+              <template v-if="group.title === 'Marketing'">
+                <v-menu
+                  v-for="subGroup in marketingGroups"
+                  :key="subGroup"
+                  location="end"
+                  open-on-hover
+                  :open-delay="80"
+                  :close-delay="150"
+                  offset="8"
+                  :close-on-content-click="false"
+                >
+                  <template v-slot:activator="{ props: subProps }">
+                    <v-list-item
+                      v-bind="subProps"
+                      :title="subGroup"
+                      class="sidebar-text sidebar-popover-item"
+                      rounded="lg"
+                      slim
+                    >
+                      <template v-slot:append>
+                        <v-icon size="16" icon="mdi-chevron-right" class="sidebar-muted" />
+                      </template>
+                    </v-list-item>
+                  </template>
+                  <v-card width="240" flat border rounded="xl" class="sidebar-surface sidebar-popover">
+                    <v-list density="compact" class="bg-transparent py-1">
+                      <v-list-subheader class="sidebar-subheader">{{ subGroup }}</v-list-subheader>
+                      <v-list-item
+                        v-for="item in group.items.filter(i => i.group === subGroup)"
+                        :key="item.title"
+                        :title="item.title"
+                        :to="item.route"
+                        @click="goTo(item.route)"
+                        class="sidebar-text sidebar-popover-item"
+                        rounded="lg"
+                        slim
+                        exact
+                      />
+                    </v-list>
+                  </v-card>
+                </v-menu>
+              </template>
+
+              <!-- Flat list for all other groups -->
+              <template v-else>
+                <v-list-item
+                  v-for="item in group.items"
+                  :key="item.title"
+                  :title="item.title"
+                  :to="isLocked(item.productId) ? undefined : item.route"
+                  @click="goTo(item.route, item.productId)"
+                  class="sidebar-text sidebar-popover-item"
+                  rounded="lg"
+                  slim
+                  exact
+                >
+                  <template v-slot:append v-if="isLocked(item.productId)">
+                    <v-icon icon="mdi-crown" size="12" class="sidebar-lock-crown" />
+                  </template>
+                </v-list-item>
+              </template>
+            </v-list>
+          </v-card>
+        </v-menu>
       </template>
     </v-list>
 
@@ -263,8 +346,8 @@ function goTo(route: string) {
             :icon="group.icon"
             variant="text"
             size="40"
-            :to="group.singleRoute"
-            @click="group.singleRoute && goTo(group.singleRoute)"
+            :to="(group.singleRoute && !isLocked(group.productId)) ? group.singleRoute : undefined"
+            @click="group.singleRoute && goTo(group.singleRoute, group.productId)"
             rounded="lg"
             class="mb-1 sidebar-text rail-icon-btn"
           />
@@ -273,20 +356,48 @@ function goTo(route: string) {
           <v-list density="compact" class="bg-transparent py-1">
             <v-list-subheader class="sidebar-subheader">{{ group.title }}</v-list-subheader>
             <template v-if="group.singleRoute">
-              <v-list-item :to="group.singleRoute" :title="group.title" @click="goTo(group.singleRoute)" class="sidebar-text rail-popover-item" rounded="lg" slim />
+              <v-list-item
+                :to="isLocked(group.productId) ? undefined : group.singleRoute"
+                :title="group.title"
+                @click="goTo(group.singleRoute!, group.productId)"
+                class="sidebar-text rail-popover-item"
+                rounded="lg"
+                slim
+              >
+                <template v-slot:append v-if="isLocked(group.productId)">
+                  <v-icon icon="mdi-crown" size="12" class="sidebar-lock-crown" />
+                </template>
+              </v-list-item>
+            </template>
+            <template v-else-if="isLocked(group.productId)">
+              <v-list-item
+                :title="group.title"
+                @click="goTo('', group.productId)"
+                class="sidebar-text rail-popover-item"
+                rounded="lg"
+                slim
+              >
+                <template v-slot:append>
+                  <v-icon icon="mdi-crown" size="12" class="sidebar-lock-crown" />
+                </template>
+              </v-list-item>
             </template>
             <template v-else>
               <v-list-item
                 v-for="item in group.items"
                 :key="item.title"
                 :title="item.title"
-                :to="item.route"
-                @click="goTo(item.route)"
+                :to="isLocked(item.productId) ? undefined : item.route"
+                @click="goTo(item.route, item.productId)"
                 class="sidebar-text rail-popover-item"
                 rounded="lg"
                 slim
                 exact
-              />
+              >
+                <template v-slot:append v-if="isLocked(item.productId)">
+                  <v-icon icon="mdi-crown" size="12" class="sidebar-lock-crown" />
+                </template>
+              </v-list-item>
             </template>
           </v-list>
         </v-card>
@@ -358,13 +469,36 @@ function goTo(route: string) {
   font-size: var(--mp-typography-fontSize-sm);
   min-height: 32px;
 }
+.sidebar-popover {
+  background: var(--mp-color-sidebar-surface);
+}
+.sidebar-popover-item {
+  font-size: var(--mp-typography-fontSize-sm);
+  min-height: 32px;
+}
+.sidebar-popover-item :deep(.v-list-item-title),
+.rail-popover-item :deep(.v-list-item-title) {
+  font-size: var(--mp-typography-fontSize-body);
+  line-height: 1.25;
+  font-weight: 400;
+}
+.sidebar-group-activator :deep(.v-list-item__append .v-icon) {
+  opacity: 0.6;
+}
 .sidebar-subheader {
   color: var(--mp-color-sidebar-textMuted);
   font-size: var(--mp-typography-fontSize-xs);
+  min-height: 24px;
+  padding-top: 4px;
+  padding-bottom: 2px;
 }
 .sidebar-help {
   color: var(--mp-color-sidebar-textFaint);
   font-size: var(--mp-typography-fontSize-body);
+}
+.sidebar-lock-crown {
+  color: rgba(var(--v-theme-on-surface), 0.45);
+  opacity: 0.75;
 }
 :deep(.active-nav-item) {
   background: rgba(var(--v-theme-primary), 0.15);

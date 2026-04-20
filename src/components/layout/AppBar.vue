@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTheme } from 'vuetify'
+import { useAccountStore } from '@/stores/useAccount'
 
 const copilotOpen = defineModel<boolean>('copilotOpen', { default: false })
 
@@ -10,7 +11,8 @@ const userName = ref('Deepak Vaidya')
 const userInitials = ref('DV')
 const userEmail = ref('deepak.v@maropost.com')
 const userRole = ref('Super Admin')
-const accountName = ref('MMC-MSC-MCC Scooter Village')
+
+const accountStore = useAccountStore()
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'maropostLight' : 'maropostDark'
@@ -37,40 +39,44 @@ function toggleTheme() {
       <v-menu location="bottom start" offset="8">
         <template v-slot:activator="{ props }">
           <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 pl-2 rounded-lg account-switcher-trigger">
-            <v-avatar color="primary" size="26" class="appbar-avatar-sm">{{ userInitials }}</v-avatar>
+            <v-avatar :color="accountStore.currentAccount.color" size="26" class="appbar-avatar-sm">{{ accountStore.currentAccount.initials }}</v-avatar>
             <div class="d-none d-md-block account-summary">
-              <div class="text-caption font-weight-medium text-truncate account-name">{{ accountName }}</div>
+              <div class="text-caption font-weight-medium text-truncate account-name">{{ accountStore.currentAccount.name }}</div>
               <div class="text-caption text-medium-emphasis account-user">{{ userName }}</div>
             </div>
             <v-icon size="14" color="medium-emphasis">mdi-chevron-down</v-icon>
           </div>
         </template>
-        <v-card width="320" rounded="xl" flat border class="account-switcher-card">
+        <v-card width="340" rounded="xl" flat border class="account-switcher-card">
           <!-- Current account header -->
           <div class="account-menu-header d-flex align-center gap-3">
-            <v-avatar color="primary" size="40" class="appbar-avatar-md">{{ userInitials }}</v-avatar>
-            <div class="account-min-width">
-              <div class="font-weight-semibold text-body-2 text-truncate">{{ accountName }}</div>
+            <v-avatar :color="accountStore.currentAccount.color" size="40" class="appbar-avatar-md">{{ accountStore.currentAccount.initials }}</v-avatar>
+            <div class="account-min-width flex-grow-1">
+              <div class="font-weight-semibold text-body-2 text-truncate">{{ accountStore.currentAccount.name }}</div>
               <div class="text-caption text-medium-emphasis">{{ userName }}</div>
             </div>
+            <v-chip size="x-small" variant="tonal" color="primary">{{ accountStore.currentAccount.plan }}</v-chip>
           </div>
           <v-divider />
           <v-list density="compact" :border="false" class="pa-3">
             <v-list-subheader class="text-uppercase mb-1 appbar-subheader">Switch Account</v-list-subheader>
-            <v-list-item rounded="lg" class="mb-1 account-list-item" active active-color="primary">
+            <v-list-item
+              v-for="acc in accountStore.accounts"
+              :key="acc.id"
+              rounded="lg"
+              class="mb-1 account-list-item"
+              :active="acc.id === accountStore.currentAccountId"
+              active-color="primary"
+              @click="accountStore.switchAccount(acc.id)"
+            >
               <template v-slot:prepend>
-                <v-avatar size="28" color="primary" variant="tonal" class="mr-3 appbar-avatar-initials">MP</v-avatar>
+                <v-avatar size="28" :color="acc.color" variant="tonal" class="mr-3 appbar-avatar-initials">{{ acc.initials }}</v-avatar>
               </template>
-              <div class="text-body-2 font-weight-medium account-item-text">MMC-MSC-MCC Scooter Village</div>
-              <template v-slot:append>
+              <div class="text-body-2 font-weight-medium account-item-text">{{ acc.name }}</div>
+              <div class="text-caption text-medium-emphasis">{{ acc.plan }}</div>
+              <template v-slot:append v-if="acc.id === accountStore.currentAccountId">
                 <v-icon size="16" color="primary">mdi-check-circle</v-icon>
               </template>
-            </v-list-item>
-            <v-list-item rounded="lg" class="account-list-item">
-              <template v-slot:prepend>
-                <v-avatar size="28" color="secondary" variant="tonal" class="mr-3 appbar-avatar-initials">MD</v-avatar>
-              </template>
-              <div class="text-body-2 account-item-text">Maropost Demo Store</div>
             </v-list-item>
           </v-list>
         </v-card>

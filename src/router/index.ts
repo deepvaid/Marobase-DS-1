@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAccountStore, productForPath } from '@/stores/useAccount'
 
 const routes = [
   // 1. Dashboard
@@ -9,6 +10,7 @@ const routes = [
   { path: '/analytics/reports/orders', name: 'OrdersReport', component: () => import('@/views/Analytics/OrdersReport.vue') },
   { path: '/analytics/reports/dispatched_orders', name: 'DispatchedOrders', component: () => import('@/views/Analytics/DispatchedOrders.vue') },
   { path: '/analytics/reports/sales_summary', name: 'SalesSummary', component: () => import('@/views/Analytics/SalesSummary.vue') },
+  { path: '/analytics/reports/erfm', name: 'ERFMReport', component: () => import('@/views/Analytics/ERFMReport.vue') },
   { path: '/analytics/reports/campaign_reports', name: 'CampaignReports', component: () => import('@/views/Analytics/CampaignReports.vue') },
   { path: '/analytics/reports/recurring_campaign_reports', name: 'RecurringCampaignReports', component: () => import('@/views/Analytics/RecurringCampaignReports.vue') },
   { path: '/analytics/reports/ab_campaign_reports', name: 'ABCampaignReports', component: () => import('@/views/Analytics/ABCampaignReports.vue') },
@@ -35,6 +37,7 @@ const routes = [
   { path: '/product_recommendations', name: 'ProductRecommendations', component: () => import('@/views/Products/ProductRecommendations.vue') },
   { path: '/commerce/products', name: 'Products', component: () => import('@/views/Products/ProductsList.vue') },
   { path: '/commerce/products/tax-categories', name: 'TaxCategories', component: () => import('@/views/Products/TaxCategories.vue') },
+  { path: '/commerce/products/collections', name: 'Collections', component: () => import('@/views/Products/Collections.vue') },
   { path: '/commerce/inventory', name: 'Inventory', component: () => import('@/views/Products/Inventory.vue') },
   { path: '/commerce/products/reservations', name: 'Reservations', component: () => import('@/views/Products/Reservations.vue') },
 
@@ -48,6 +51,7 @@ const routes = [
   { path: '/commerce/stores/themes', name: 'StoreThemes', component: () => import('@/views/Commerce/StoreThemes.vue') },
   { path: '/commerce/stores/navigation', name: 'StoreNavigation', component: () => import('@/views/Commerce/StoreNavigation.vue') },
   { path: '/commerce/themes/builder', name: 'StoreBuilder', component: () => import('@/views/Commerce/StoreBuilder.vue'), meta: { fullPage: true } },
+  { path: '/commerce/retail', name: 'Retail', component: () => import('@/views/Commerce/Retail.vue') },
 
   // 6. Marketing
   { path: '/campaigns/new', name: 'CreateCampaign', component: () => import('@/views/Marketing/CreateCampaign.vue'), meta: { fullPage: true } },
@@ -107,6 +111,9 @@ const routes = [
   { path: '/users', redirect: '/settings' },
   { path: '/profile', redirect: '/settings' },
 
+  // Cross-sell landing pages
+  { path: '/cross-sell/:product', name: 'CrossSell', component: () => import('@/views/CrossSell/CrossSellLanding.vue') },
+
   // Redirect root to dashboard
   { path: '/', redirect: '/dashboard' },
   // Catchall
@@ -116,6 +123,15 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+router.beforeEach((to) => {
+  if (to.path.startsWith('/cross-sell')) return
+  const account = useAccountStore()
+  const pid = productForPath(to.path)
+  if (pid && !account.hasEntitlement(pid)) {
+    return { path: `/cross-sell/${pid}` }
+  }
 })
 
 export default router
